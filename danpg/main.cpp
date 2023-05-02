@@ -6,9 +6,21 @@
 //
 
 #include <iostream>
+#include <fstream>
+
+#include "jpeg.hpp"
 
 int main(int argc, const char * argv[]) {
-    // insert code here...
-    std::cout << "Hello, World!\n";
+    
+    std::fstream f("/Users/daniel/Projects.nosync/danpg/danpg/danpg/testimage.jpg");
+    
+    if (f.bad()) {
+        std::cout << "unable to open" << std::endl;
+    } else {
+        std::cout << "opened" << std::endl;
+        
+        Jpeg jpeg(f);
+    }
+    
     return 0;
 }
