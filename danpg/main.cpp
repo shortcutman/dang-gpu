@@ -12,7 +12,7 @@
 
 int main(int argc, const char * argv[]) {
     
-    std::fstream f("/Users/daniel/Projects.nosync/danpg/danpg/danpg/testimage.jpg");
+    std::fstream f("/Users/daniel/Projects.nosync/danpg/danpg/danpg/image2.jpg");
     
     if (f.bad()) {
         std::cout << "unable to open" << std::endl;

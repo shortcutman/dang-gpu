@@ -9,10 +9,34 @@
 /* Begin PBXBuildFile section */
 		65518FEC2A0129F000F2D094 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65518FEB2A0129F000F2D094 /* main.cpp */; };
 		65518FF52A012A9700F2D094 /* jpeg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65518FF32A012A9700F2D094 /* jpeg.cpp */; };
+		65A3DB932A36FA50001158DA /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65A3DB922A36FA50001158DA /* main.cpp */; };
+		65A3DBA72A36FA7C001158DA /* liblibdanpg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 65A3DB9B2A36FA67001158DA /* liblibdanpg.a */; };
+		65A3DBAB2A36FB77001158DA /* huffman_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65A3DBAA2A36FB77001158DA /* huffman_test.cpp */; };
+		65A3DBAE2A36FBC8001158DA /* huffmantable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65A3DBAC2A36FBC8001158DA /* huffmantable.cpp */; };
+		65A3DBAF2A36FBC8001158DA /* huffmantable.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 65A3DBAD2A36FBC8001158DA /* huffmantable.hpp */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		65A3DBA82A36FA7C001158DA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 65518FE02A0129F000F2D094 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 65A3DB9A2A36FA67001158DA;
+			remoteInfo = libdanpg;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		65518FE62A0129F000F2D094 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		65A3DB8E2A36FA50001158DA /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -29,10 +53,31 @@
 		65518FF22A012A1100F2D094 /* testimage.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = testimage.jpg; sourceTree = "<group>"; };
 		65518FF32A012A9700F2D094 /* jpeg.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = jpeg.cpp; sourceTree = "<group>"; };
 		65518FF42A012A9700F2D094 /* jpeg.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = jpeg.hpp; sourceTree = "<group>"; };
+		65A3DB902A36FA50001158DA /* danpg-tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "danpg-tests"; sourceTree = BUILT_PRODUCTS_DIR; };
+		65A3DB922A36FA50001158DA /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		65A3DB9B2A36FA67001158DA /* liblibdanpg.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = liblibdanpg.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		65A3DBAA2A36FB77001158DA /* huffman_test.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = huffman_test.cpp; sourceTree = "<group>"; };
+		65A3DBAC2A36FBC8001158DA /* huffmantable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = huffmantable.cpp; sourceTree = "<group>"; };
+		65A3DBAD2A36FBC8001158DA /* huffmantable.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = huffmantable.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		65518FE52A0129F000F2D094 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		65A3DB8D2A36FA50001158DA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				65A3DBA72A36FA7C001158DA /* liblibdanpg.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		65A3DB992A36FA67001158DA /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -46,7 +91,10 @@
 			isa = PBXGroup;
 			children = (
 				65518FEA2A0129F000F2D094 /* danpg */,
+				65A3DB912A36FA50001158DA /* danpg-tests */,
+				65A3DB9C2A36FA67001158DA /* libdanpg */,
 				65518FE92A0129F000F2D094 /* Products */,
+				65A3DBA62A36FA7C001158DA /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -54,6 +102,8 @@
 			isa = PBXGroup;
 			children = (
 				65518FE82A0129F000F2D094 /* danpg */,
+				65A3DB902A36FA50001158DA /* danpg-tests */,
+				65A3DB9B2A36FA67001158DA /* liblibdanpg.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -69,7 +119,43 @@
 			path = danpg;
 			sourceTree = "<group>";
 		};
+		65A3DB912A36FA50001158DA /* danpg-tests */ = {
+			isa = PBXGroup;
+			children = (
+				65A3DB922A36FA50001158DA /* main.cpp */,
+				65A3DBAA2A36FB77001158DA /* huffman_test.cpp */,
+			);
+			path = "danpg-tests";
+			sourceTree = "<group>";
+		};
+		65A3DB9C2A36FA67001158DA /* libdanpg */ = {
+			isa = PBXGroup;
+			children = (
+				65A3DBAC2A36FBC8001158DA /* huffmantable.cpp */,
+				65A3DBAD2A36FBC8001158DA /* huffmantable.hpp */,
+			);
+			path = libdanpg;
+			sourceTree = "<group>";
+		};
+		65A3DBA62A36FA7C001158DA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		65A3DB972A36FA67001158DA /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				65A3DBAF2A36FBC8001158DA /* huffmantable.hpp in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
 		65518FE72A0129F000F2D094 /* danpg */ = {
@@ -89,6 +175,41 @@
 			productReference = 65518FE82A0129F000F2D094 /* danpg */;
 			productType = "com.apple.product-type.tool";
 		};
+		65A3DB8F2A36FA50001158DA /* danpg-tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 65A3DB962A36FA50001158DA /* Build configuration list for PBXNativeTarget "danpg-tests" */;
+			buildPhases = (
+				65A3DB8C2A36FA50001158DA /* Sources */,
+				65A3DB8D2A36FA50001158DA /* Frameworks */,
+				65A3DB8E2A36FA50001158DA /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				65A3DBA92A36FA7C001158DA /* PBXTargetDependency */,
+			);
+			name = "danpg-tests";
+			productName = "danpg-tests";
+			productReference = 65A3DB902A36FA50001158DA /* danpg-tests */;
+			productType = "com.apple.product-type.tool";
+		};
+		65A3DB9A2A36FA67001158DA /* libdanpg */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 65A3DBA32A36FA67001158DA /* Build configuration list for PBXNativeTarget "libdanpg" */;
+			buildPhases = (
+				65A3DB972A36FA67001158DA /* Headers */,
+				65A3DB982A36FA67001158DA /* Sources */,
+				65A3DB992A36FA67001158DA /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = libdanpg;
+			productName = libdanpg;
+			productReference = 65A3DB9B2A36FA67001158DA /* liblibdanpg.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -99,6 +220,12 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					65518FE72A0129F000F2D094 = {
+						CreatedOnToolsVersion = 14.3;
+					};
+					65A3DB8F2A36FA50001158DA = {
+						CreatedOnToolsVersion = 14.3;
+					};
+					65A3DB9A2A36FA67001158DA = {
 						CreatedOnToolsVersion = 14.3;
 					};
 				};
@@ -117,6 +244,8 @@
 			projectRoot = "";
 			targets = (
 				65518FE72A0129F000F2D094 /* danpg */,
+				65A3DB8F2A36FA50001158DA /* danpg-tests */,
+				65A3DB9A2A36FA67001158DA /* libdanpg */,
 			);
 		};
 /* End PBXProject section */
@@ -131,13 +260,39 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		65A3DB8C2A36FA50001158DA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				65A3DB932A36FA50001158DA /* main.cpp in Sources */,
+				65A3DBAB2A36FB77001158DA /* huffman_test.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		65A3DB982A36FA67001158DA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				65A3DBAE2A36FBC8001158DA /* huffmantable.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		65A3DBA92A36FA7C001158DA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 65A3DB9A2A36FA67001158DA /* libdanpg */;
+			targetProxy = 65A3DBA82A36FA7C001158DA /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		65518FED2A0129F000F2D094 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -184,7 +339,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.2;
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -196,6 +351,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -236,7 +392,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.2;
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
@@ -259,6 +415,62 @@
 			};
 			name = Release;
 		};
+		65A3DB942A36FA50001158DA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				HEADER_SEARCH_PATHS = /opt/homebrew/include;
+				LIBRARY_SEARCH_PATHS = /opt/homebrew/lib;
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				OTHER_LDFLAGS = (
+					"-l",
+					gtest,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		65A3DB952A36FA50001158DA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				HEADER_SEARCH_PATHS = /opt/homebrew/include;
+				LIBRARY_SEARCH_PATHS = /opt/homebrew/lib;
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				OTHER_LDFLAGS = (
+					"-l",
+					gtest,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		65A3DBA42A36FA67001158DA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				EXECUTABLE_PREFIX = lib;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		65A3DBA52A36FA67001158DA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				EXECUTABLE_PREFIX = lib;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -276,6 +488,24 @@
 			buildConfigurations = (
 				65518FF02A0129F000F2D094 /* Debug */,
 				65518FF12A0129F000F2D094 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		65A3DB962A36FA50001158DA /* Build configuration list for PBXNativeTarget "danpg-tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				65A3DB942A36FA50001158DA /* Debug */,
+				65A3DB952A36FA50001158DA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		65A3DBA32A36FA67001158DA /* Build configuration list for PBXNativeTarget "libdanpg" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				65A3DBA42A36FA67001158DA /* Debug */,
+				65A3DBA52A36FA67001158DA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
