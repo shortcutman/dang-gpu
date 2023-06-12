@@ -10,6 +10,30 @@
 #include <iostream>
 #include <map>
 
+uint8_t HuffmanTable::decode(const std::vector<uint8_t> &data) {
+    uint16_t word = 0;
+    uint8_t byte = data[0];
+    
+    uint8_t numberOfBits = _huffsize.front();
+    uint16_t mask = 0xFFFF << (16 - numberOfBits);
+    
+    word = byte;
+    word = word << 8;
+    
+    for (size_t i = 0; i < _huffcode.size(); i++) {
+        if (_huffsize[i] > numberOfBits) {
+            mask = 0xFFFF << (16 - _huffsize[i]);
+            numberOfBits = _huffsize[i];
+        }
+        
+        if ((_huffcode[i] << (16 - numberOfBits)) == (word & mask)) {
+            return _huffval[i];
+        }
+    }
+    
+    return 0;
+}
+
 HuffmanTable HuffmanTable::build(std::vector<uint8_t> &data) {
     size_t codeCount = 0;
     std::array<uint8_t, 16> bits;
