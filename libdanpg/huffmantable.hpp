@@ -9,6 +9,7 @@
 #define huffmantable_hpp
 
 #include <array>
+#include <span>
 #include <vector>
 #include <cstdint>
 
@@ -23,7 +24,7 @@ public:
     
     uint8_t decode(const std::vector<uint8_t>& data);
     
-    static HuffmanTable build(std::vector<uint8_t>& data);
+    static HuffmanTable build(std::span<uint8_t> data);
 };
 
 #endif /* huffmantable_hpp */

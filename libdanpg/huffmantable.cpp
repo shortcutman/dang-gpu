@@ -34,7 +34,7 @@ uint8_t HuffmanTable::decode(const std::vector<uint8_t> &data) {
     return 0;
 }
 
-HuffmanTable HuffmanTable::build(std::vector<uint8_t> &data) {
+HuffmanTable HuffmanTable::build(std::span<uint8_t> data) {
     size_t codeCount = 0;
     std::array<uint8_t, 16> bits;
     for (unsigned int i = 0; i < bits.size(); i++) {
