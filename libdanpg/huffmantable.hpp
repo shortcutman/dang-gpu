@@ -22,9 +22,22 @@ public:
     std::vector<uint8_t> _huffsize;
     std::vector<uint16_t> _huffcode;
     
-    uint8_t decode(const std::vector<uint8_t>& data);
+    uint8_t decode(std::span<uint8_t> data);
     
     static HuffmanTable build(std::span<uint8_t> data);
+};
+
+class HuffmanDecoder {
+private:
+    HuffmanTable* _table;
+    size_t _bits = 0;
+    std::span<uint8_t> _data;
+    
+public:
+    void setTable(HuffmanTable* table);
+    void setData(std::span<uint8_t> data);
+    
+    uint8_t nextByte();
 };
 
 #endif /* huffmantable_hpp */

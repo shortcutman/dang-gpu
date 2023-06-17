@@ -10,7 +10,7 @@
 #include <iostream>
 #include <map>
 
-uint8_t HuffmanTable::decode(const std::vector<uint8_t> &data) {
+uint8_t HuffmanTable::decode(std::span<uint8_t> data) {
     uint16_t word = 0;
     uint8_t byte = data[0];
     
@@ -91,4 +91,44 @@ HuffmanTable HuffmanTable::build(std::span<uint8_t> data) {
     table._huffsize = huffsize;
     table._huffcode = huffcode;
     return table;
+}
+
+void HuffmanDecoder::setTable(HuffmanTable *table) {
+    _table = table;
+}
+
+void HuffmanDecoder::setData(std::span<uint8_t> data) {
+    _data = data;
+}
+
+uint8_t HuffmanDecoder::nextByte() {
+    uint16_t potentialCode = _data[0] << (8 + _bits);
+    if (_data.size() >  1) {
+        potentialCode += _data[1] << _bits;
+        if (_data.size() > 2) {
+            potentialCode += _data[2] << _bits;
+        }
+    }
+    
+    uint8_t numberOfBits = _table->_huffsize.front();
+    uint16_t mask = 0xFFFF << (16 - numberOfBits);
+        
+    for (size_t i = 0; i < _table->_huffcode.size(); i++) {
+        if (_table->_huffsize[i] > numberOfBits) {
+            mask = 0xFFFF << (16 - _table->_huffsize[i]);
+            numberOfBits = _table->_huffsize[i];
+        }
+        
+        if ((_table->_huffcode[i] << (16 - numberOfBits)) == (potentialCode & mask)) {
+            _bits += numberOfBits;
+            if (_bits >= 8) {
+                _data = _data.subspan(1);
+                _bits -= 8;
+            }
+            
+            return _table->_huffval[i];
+        }
+    }
+    
+    return 0;
 }
