@@ -105,8 +105,8 @@ uint8_t HuffmanDecoder::nextByte() {
     uint16_t potentialCode = _data[0] << (8 + _bits);
     if (_data.size() >  1) {
         potentialCode += _data[1] << _bits;
-        if (_data.size() > 2) {
-            potentialCode += _data[2] << _bits;
+        if (_data.size() > 2 && _bits > 0) {
+            potentialCode += _data[2] >> (8 - _bits);
         }
     }
     
