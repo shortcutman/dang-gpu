@@ -10,6 +10,8 @@
 
 #include <istream>
 
+#include "huffmantable.hpp"
+
 class Jpeg {
 private:
     std::vector<uint8_t> _identifier;
@@ -19,11 +21,6 @@ private:
     typedef std::array<uint8_t, 64> QuantisationTable;
     std::array<QuantisationTable, 4> _quantTables;
     
-    struct HuffmanTable {
-        std::array<uint8_t, 16> bits;
-        std::vector<uint8_t> huffsize;
-        std::unordered_map<size_t, uint16_t> huffcode;
-    };
     std::array<HuffmanTable, 4> _huffmanTablesAC;
     std::array<HuffmanTable, 4> _huffmanTablesDC;
     

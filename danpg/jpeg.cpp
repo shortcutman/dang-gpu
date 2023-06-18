@@ -114,58 +114,8 @@ void Jpeg::huffmanTable(std::vector<uint8_t> &data) {
     uint8_t huffmanTableDestination = *reinterpret_cast<uint8_t*>(&data[0]) & 0x0F;
     std::cout << ", Table class (Tc): " << static_cast<int>(tableClass) << ", Table Destination (Th): " << static_cast<int>(huffmanTableDestination) << std::endl;
     
-    HuffmanTable table;
-    
-    size_t codeCount = 0;
-    std::array<uint8_t, 16> bits;
-    for (unsigned int i = 0; i < bits.size(); i++) {
-        bits[i] = *reinterpret_cast<uint8_t*>(&data[1 + i]);
-        codeCount += bits[i];
-        std::cout << "\t\tBITS, " << (i + 1) << " bits has " << static_cast<int>(bits[i]) << " codes" << std::endl;
-    }
-    
-    std::vector<uint8_t> huffval;
-    for (unsigned int i = 0; i < codeCount; i++) {
-        huffval.push_back(*reinterpret_cast<uint8_t*>(&data[17 + i]));
-    }
-    
-    std::vector<uint8_t> huffsize;
-    {
-        unsigned int i = 1;
-        do {
-            unsigned int j = 1;
-            while (j <= bits.at(i - 1)) {
-                huffsize.push_back(i);
-                j++;
-            }
-            i++;
-        } while (i <= 16);
-        huffsize.push_back(0);
-    }
-    
-    std::map<size_t, uint16_t> huffcode;
-    {
-        size_t k = 0;
-        uint16_t code = 0;
-        size_t si = huffsize[0]; //huffman code size
-        
-        for (;;) {
-            do {
-                huffcode[k] = code;
-                code++;
-                k++;
-            } while (huffsize[k] == si);
-            
-            if (huffsize[k] == 0) {
-                break;
-            }
-            
-            do {
-                code = code << 1;
-                si++;
-            } while (huffsize[k] != si);
-        }
-    }
+    std::span<uint8_t> tableDef(&data[1], data.size() - 1);
+    HuffmanTable table = HuffmanTable::build(tableDef);
     
     if (tableClass == 0) {
         _huffmanTablesDC.at(huffmanTableDestination) = table;
@@ -240,6 +190,9 @@ void Jpeg::startOfScan(std::vector<uint8_t> &data) {
     if (ss != 0 || se != 63 || ah != 0 || al != 0) {
         throw std::logic_error("Start of scan end parameters not set for Sequential DCT");
     }
+    
+    afterComponents += 3;
+    std::span followingData{&data[afterComponents], data.size() - afterComponents };
 }
 
 void Jpeg::restartInterval(std::vector<uint8_t> &data) {

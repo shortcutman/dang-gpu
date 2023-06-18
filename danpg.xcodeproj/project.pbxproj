@@ -14,10 +14,18 @@
 		65A3DBAB2A36FB77001158DA /* huffman_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65A3DBAA2A36FB77001158DA /* huffman_test.cpp */; };
 		65A3DBAE2A36FBC8001158DA /* huffmantable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65A3DBAC2A36FBC8001158DA /* huffmantable.cpp */; };
 		65A3DBAF2A36FBC8001158DA /* huffmantable.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 65A3DBAD2A36FBC8001158DA /* huffmantable.hpp */; };
+		65A3DBB12A3EDF19001158DA /* liblibdanpg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 65A3DB9B2A36FA67001158DA /* liblibdanpg.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
 		65A3DBA82A36FA7C001158DA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 65518FE02A0129F000F2D094 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 65A3DB9A2A36FA67001158DA;
+			remoteInfo = libdanpg;
+		};
+		65A3DBB22A3EDF19001158DA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 65518FE02A0129F000F2D094 /* Project object */;
 			proxyType = 1;
@@ -66,6 +74,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65A3DBB12A3EDF19001158DA /* liblibdanpg.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -169,6 +178,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				65A3DBB32A3EDF19001158DA /* PBXTargetDependency */,
 			);
 			name = danpg;
 			productName = danpg;
@@ -284,6 +294,11 @@
 			isa = PBXTargetDependency;
 			target = 65A3DB9A2A36FA67001158DA /* libdanpg */;
 			targetProxy = 65A3DBA82A36FA7C001158DA /* PBXContainerItemProxy */;
+		};
+		65A3DBB32A3EDF19001158DA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 65A3DB9A2A36FA67001158DA /* libdanpg */;
+			targetProxy = 65A3DBB22A3EDF19001158DA /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
