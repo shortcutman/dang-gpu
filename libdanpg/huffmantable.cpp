@@ -107,7 +107,6 @@ size_t HuffmanDecoder::offset() const {
 
 uint8_t HuffmanDecoder::nextByte() {
     uint16_t potentialCode = getNext16bits();
-    
     uint8_t numberOfBits = _table->_huffsize.front();
     uint16_t mask = 0xFFFF << (16 - numberOfBits);
         
@@ -131,6 +130,17 @@ uint8_t HuffmanDecoder::nextByte() {
 
 uint16_t HuffmanDecoder::getNext16bits() {
     uint16_t next16 = _data[_offset] << (8 + _bits);
+    
+    if ((next16 & 0xFF00) == 0xFF00) {
+        if (_data.size() > 1) {
+            if (_data[_offset + 1] == 0x00) {
+                _offset++; //skip byte stuffing
+            } else {
+                throw std::runtime_error("Encountered marker segment");
+            }
+        }
+    }
+    
     if (_data.size() >  1) {
         next16 += _data[_offset + 1] << _bits;
         if (_data.size() > 2 && _bits > 0) {

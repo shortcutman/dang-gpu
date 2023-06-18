@@ -198,7 +198,7 @@ TEST(HuffmanDecoder, Decode9bitThen3bit) {
     decoder.setTable(&table);
     
     // code b1 1111 1110 : val 0xb, code b100: val 0x03, b0000 padding
-    std::vector<uint8_t> encoded = {0xFF, 0x40};
+    std::vector<uint8_t> encoded = {0xFF, 0x00, 0x40};
     decoder.setData(encoded);
     auto byte = decoder.nextByte();
     EXPECT_EQ(byte, 0x0b);
@@ -214,7 +214,7 @@ TEST(HuffmanDecoder, Decode9bitThen9bit) {
     decoder.setTable(&table);
     
     // code b1 1111 1110 : val 0xb, code b1 1111 1110 : val 0xb, b00 0000 1111 1111 padding
-    std::vector<uint8_t> encoded = {0xFF, 0x7F, 0x80, 0xFF};
+    std::vector<uint8_t> encoded = {0xFF, 0x00, 0x7F, 0x80};
     decoder.setData(encoded);
     auto byte = decoder.nextByte();
     EXPECT_EQ(byte, 0x0b);
@@ -237,6 +237,17 @@ TEST(HuffmanDecoder, Decode6bitThen9bit) {
     
     byte = decoder.nextByte();
     EXPECT_EQ(byte, 0x0b);
+}
+
+TEST(HuffmanDecoder, DecodeMarkerSegmentException) {
+    std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
+    HuffmanTable table = HuffmanTable::build(data);
+    HuffmanDecoder decoder;
+    decoder.setTable(&table);
+    
+    std::vector<uint8_t> encoded = {0xFF, 0xD0};
+    decoder.setData(encoded);
+    EXPECT_THROW(decoder.nextByte(), std::runtime_error);
 }
 
 }
