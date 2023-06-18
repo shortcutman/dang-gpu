@@ -21,9 +21,7 @@ public:
     std::vector<uint8_t> _huffval;
     std::vector<uint8_t> _huffsize;
     std::vector<uint16_t> _huffcode;
-    
-    uint8_t decode(std::span<uint8_t> data);
-    
+        
     static HuffmanTable build(std::span<uint8_t> data);
 };
 

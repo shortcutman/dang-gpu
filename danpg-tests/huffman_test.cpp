@@ -45,24 +45,6 @@ TEST(Huffman, CalculateData) {
     EXPECT_EQ(table._huffcode, huffcodeExpected);
 }
 
-TEST(Huffman, Decode2bit) {
-    std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
-    HuffmanTable table = HuffmanTable::build(data);
-    
-    std::vector<uint8_t> encoded = {0x00};
-    auto byte = table.decode(encoded);
-    EXPECT_EQ(byte, 0x00);
-}
-
-TEST(Huffman, Decode3bit) {
-    std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
-    HuffmanTable table = HuffmanTable::build(data);
-    
-    std::vector<uint8_t> encoded = {0x80};
-    auto byte = table.decode(encoded);
-    EXPECT_EQ(byte, 0x03);
-}
-
 TEST(HuffmanDecoder, Decode2bit) {
     std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
     HuffmanTable table = HuffmanTable::build(data);
