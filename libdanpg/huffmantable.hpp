@@ -29,13 +29,15 @@ public:
 
 class HuffmanDecoder {
 private:
-    HuffmanTable* _table;
-    size_t _bits = 0;
+    HuffmanTable* _table = nullptr;
+    uint8_t _bits = 0;
+    size_t _offset = 0;
     std::span<uint8_t> _data;
     
 public:
     void setTable(HuffmanTable* table);
     void setData(std::span<uint8_t> data);
+    size_t offset() const;
     
     uint8_t nextByte();
     

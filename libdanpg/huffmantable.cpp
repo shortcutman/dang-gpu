@@ -101,6 +101,10 @@ void HuffmanDecoder::setData(std::span<uint8_t> data) {
     _data = data;
 }
 
+size_t HuffmanDecoder::offset() const {
+    return _offset;
+}
+
 uint8_t HuffmanDecoder::nextByte() {
     uint16_t potentialCode = getNext16bits();
     
@@ -126,11 +130,11 @@ uint8_t HuffmanDecoder::nextByte() {
 }
 
 uint16_t HuffmanDecoder::getNext16bits() {
-    uint16_t next16 = _data[0] << (8 + _bits);
+    uint16_t next16 = _data[_offset] << (8 + _bits);
     if (_data.size() >  1) {
-        next16 += _data[1] << _bits;
+        next16 += _data[_offset + 1] << _bits;
         if (_data.size() > 2 && _bits > 0) {
-            next16 += _data[2] >> (8 - _bits);
+            next16 += _data[_offset + 2] >> (8 - _bits);
         }
     }
     
@@ -140,7 +144,7 @@ uint16_t HuffmanDecoder::getNext16bits() {
 void HuffmanDecoder::advanceBits(uint8_t bits) {
     _bits += bits;
     if (_bits >= 8) {
-        _data = _data.subspan(1);
+        _offset++;
         _bits -= 8;
     }
 }
