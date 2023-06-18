@@ -165,7 +165,8 @@ TEST(HuffmanDecoder, Decode3bitThen3bit) {
     HuffmanDecoder decoder;
     decoder.setTable(&table);
     
-    std::vector<uint8_t> encoded = {0x94};// code b100: val 0x03, code b101 : val 0x4, b00 padding
+    // code b100: val 0x03, code b101 : val 0x4, b00 padding
+    std::vector<uint8_t> encoded = {0x94};
     decoder.setData(encoded);
     auto byte = decoder.nextByte();
     EXPECT_EQ(byte, 0x03);
@@ -196,7 +197,7 @@ TEST(HuffmanDecoder, Decode9bitThen3bit) {
     HuffmanDecoder decoder;
     decoder.setTable(&table);
     
-    // code b100: val 0x03, code b1 1111 1110 : val 0xb, b0000 padding
+    // code b1 1111 1110 : val 0xb, code b100: val 0x03, b0000 padding
     std::vector<uint8_t> encoded = {0xFF, 0x40};
     decoder.setData(encoded);
     auto byte = decoder.nextByte();
@@ -212,7 +213,7 @@ TEST(HuffmanDecoder, Decode9bitThen9bit) {
     HuffmanDecoder decoder;
     decoder.setTable(&table);
     
-    // code b100: val 0x03, code b1 1111 1110 : val 0xb, b0000 padding
+    // code b1 1111 1110 : val 0xb, code b1 1111 1110 : val 0xb, b00 0000 1111 1111 padding
     std::vector<uint8_t> encoded = {0xFF, 0x7F, 0x80, 0xFF};
     decoder.setData(encoded);
     auto byte = decoder.nextByte();
@@ -228,7 +229,7 @@ TEST(HuffmanDecoder, Decode6bitThen9bit) {
     HuffmanDecoder decoder;
     decoder.setTable(&table);
     
-    // code b100: val 0x03, code b1 1111 1110 : val 0xb, b0000 padding
+    // code b111110: val 0x08, code b1 1111 1110 : val 0xb, b00 0000 0000 padding
     std::vector<uint8_t> encoded = {0xFB, 0xFC, 0x00};
     decoder.setData(encoded);
     auto byte = decoder.nextByte();
