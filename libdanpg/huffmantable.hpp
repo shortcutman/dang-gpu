@@ -38,6 +38,9 @@ public:
     void setData(std::span<uint8_t> data);
     
     uint8_t nextByte();
+    
+    uint16_t getNext16bits();
+    void advanceBits(uint8_t bits);
 };
 
 #endif /* huffmantable_hpp */

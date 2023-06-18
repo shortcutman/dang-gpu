@@ -102,13 +102,7 @@ void HuffmanDecoder::setData(std::span<uint8_t> data) {
 }
 
 uint8_t HuffmanDecoder::nextByte() {
-    uint16_t potentialCode = _data[0] << (8 + _bits);
-    if (_data.size() >  1) {
-        potentialCode += _data[1] << _bits;
-        if (_data.size() > 2 && _bits > 0) {
-            potentialCode += _data[2] >> (8 - _bits);
-        }
-    }
+    uint16_t potentialCode = getNext16bits();
     
     uint8_t numberOfBits = _table->_huffsize.front();
     uint16_t mask = 0xFFFF << (16 - numberOfBits);
@@ -119,16 +113,34 @@ uint8_t HuffmanDecoder::nextByte() {
             numberOfBits = _table->_huffsize[i];
         }
         
-        if ((_table->_huffcode[i] << (16 - numberOfBits)) == (potentialCode & mask)) {
-            _bits += numberOfBits;
-            if (_bits >= 8) {
-                _data = _data.subspan(1);
-                _bits -= 8;
-            }
-            
+        uint16_t codeEntry = (_table->_huffcode[i] << (16 - numberOfBits));
+        
+        if (codeEntry == (potentialCode & mask)) {
+            advanceBits(numberOfBits);
             return _table->_huffval[i];
         }
     }
     
+    throw std::runtime_error("No code found.");
     return 0;
+}
+
+uint16_t HuffmanDecoder::getNext16bits() {
+    uint16_t next16 = _data[0] << (8 + _bits);
+    if (_data.size() >  1) {
+        next16 += _data[1] << _bits;
+        if (_data.size() > 2 && _bits > 0) {
+            next16 += _data[2] >> (8 - _bits);
+        }
+    }
+    
+    return next16;
+}
+
+void HuffmanDecoder::advanceBits(uint8_t bits) {
+    _bits += bits;
+    if (_bits >= 8) {
+        _data = _data.subspan(1);
+        _bits -= 8;
+    }
 }
