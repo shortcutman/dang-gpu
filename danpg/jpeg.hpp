@@ -27,7 +27,6 @@ private:
     uint8_t _frameSamplePrecision;
     uint16_t _y; //number of lines
     uint16_t _x; //number of samples per line
-    uint8_t _nf; //number of image components in frame
     
     struct ImageComponent {
         uint8_t _c; //component identifier
