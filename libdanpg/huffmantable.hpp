@@ -38,7 +38,8 @@ public:
     size_t offset() const;
     
     uint8_t nextByte();
-    
+
+private:
     uint16_t getNext16bits();
     void advanceBits(uint8_t bits);
 };
