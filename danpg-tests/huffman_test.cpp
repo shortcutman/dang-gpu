@@ -232,4 +232,23 @@ TEST(HuffmanDecoder, DecodeMarkerSegmentException) {
     EXPECT_THROW(decoder.nextByte(), std::runtime_error);
 }
 
+TEST(HuffmanDecoder, Decode3bitSkip3Then3bit) {
+    std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
+    HuffmanTable table = HuffmanTable::build(data);
+    HuffmanDecoder decoder;
+    decoder.setTable(&table);
+    
+    // code b100: val 0x03, b111 direct, code b101 : val 0x4, b000 0000 padding
+    std::vector<uint8_t> encoded = {0x9E, 0x80};
+    decoder.setData(encoded);
+    auto byte = decoder.nextByte();
+    EXPECT_EQ(byte, 0x03);
+    
+    byte = decoder.nextXBits(3);
+    EXPECT_EQ(byte, 0x07);
+    
+    byte = decoder.nextByte();
+    EXPECT_EQ(byte, 0x04);
+}
+
 }
