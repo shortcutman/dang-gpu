@@ -108,7 +108,7 @@ uint16_t HuffmanDecoder::nextXBits(size_t bits) {
     uint16_t value = getNext16bits();
     uint16_t mask = 0xFFFF << (16 - bits);
     advanceBits(bits);
-    return (value | mask) >> (16 - bits);
+    return (value & mask) >> (16 - bits);
 }
 
 uint16_t HuffmanDecoder::getNext16bits() {
