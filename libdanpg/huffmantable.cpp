@@ -14,13 +14,13 @@ HuffmanTable HuffmanTable::build(std::span<uint8_t> data) {
     size_t codeCount = 0;
     std::array<uint8_t, 16> bits;
     for (unsigned int i = 0; i < bits.size(); i++) {
-        bits[i] = *reinterpret_cast<uint8_t*>(&data[1 + i]);
+        bits[i] = *reinterpret_cast<uint8_t*>(&data[i]);
         codeCount += bits[i];
     }
     
     std::vector<uint8_t> huffval;
     for (unsigned int i = 0; i < codeCount; i++) {
-        huffval.push_back(*reinterpret_cast<uint8_t*>(&data[17 + i]));
+        huffval.push_back(*reinterpret_cast<uint8_t*>(&data[16 + i]));
     }
     
     std::vector<uint8_t> huffsize;
