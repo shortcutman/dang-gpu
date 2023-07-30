@@ -43,10 +43,21 @@ private:
     };
     std::vector<ImageComponentInScan> _imageComponentsInScan;
     
-    size_t _numberOfMCU;
+    typedef std::array<int, 8*8> DataUnit;
+    typedef std::tuple<int, int, int> Colour;
+    
+    size_t _numberOfMCU = 0;
+    bool _inScan = false;
     
 public:
     Jpeg(std::istream& is);
+    
+    void readData(std::istream& is);
+    void readScanData(std::istream& is);
+    DataUnit readBlock(HuffmanDecoder& dec, ImageComponentInScan ic, bool resetDC);
+    uint8_t deZigZag(uint8_t index);
+    DataUnit dequantiseBlock(DataUnit du, ImageComponent ic);
+    DataUnit idct(DataUnit du);
     
     void appZeroData(std::vector<uint8_t>& data);
     void quantisationTable(std::vector<uint8_t>& data);
@@ -55,7 +66,6 @@ public:
     void sofBaselineDCT(std::vector<uint8_t>& data);
     void startOfScan(std::vector<uint8_t>& data);
     void restartInterval(std::vector<uint8_t>& data);
-    
     
 };
 

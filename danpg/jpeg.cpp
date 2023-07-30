@@ -11,6 +11,9 @@
 #include <iostream>
 #include <bit>
 #include <map>
+#include <fstream>
+#include <numbers>
+#include <cmath>
 
 #include <arpa/inet.h>
 
@@ -25,58 +28,275 @@ T getAs(void* data) {
 
 Jpeg::Jpeg(std::istream& is) {
     while (!is.eof()) {
-        uint8_t step = is.get();
-        if (step == 0xff) {
-            uint8_t markerCode = is.get();
-            std::cout << "Marker : 0x" << std::hex << static_cast<int>(markerCode) << std::dec << " pos: " << is.tellg();// << std::endl;
-            
-            if (markerCode == 0xd8) {
-                std::cout << "\tSOI Start of Image, skipping byte count" << std::endl;
-                continue;
-            }
-            
-            uint16_t segmentBytes;
-            is.read(reinterpret_cast<char*>(&segmentBytes), 2);
-            segmentBytes = htons(segmentBytes);
-            segmentBytes -= 2;
-            
-            std::cout << "\tSegment has " << segmentBytes << " bytes";
-            
-            std::vector<uint8_t> data;
-            data.resize(segmentBytes);
-            is.read(reinterpret_cast<char*>(&data[0]), data.size());
-            
-            switch (markerCode) {
-                case 0xe0:
-                    appZeroData(data);
-                    break;
-                    
-                case 0xdb:
-                    quantisationTable(data);
-                    break;
-                    
-                case 0xc0:
-                    sofBaselineDCT(data);
-                    break;
-                    
-                case 0xc4:
-                    huffmanTable(data);
-                    break;
-                    
-                case 0xda:
-                    startOfScan(data);
-                    break;
-                    
-                case 0xdd:
-                    restartInterval(data);
-                    break;
-                    
-                default:
-                    std::cout << "\tUnhandled marker segment" << std::endl;
-                    break;
-            }
+        if (!_inScan) {
+            readData(is);
+        } else {
+            readScanData(is);
         }
     }
+}
+
+void Jpeg::readData(std::istream& is) {
+    uint8_t step = is.get();
+    if (step == 0xff) {
+        uint8_t markerCode = is.get();
+        std::cout << "Marker : 0x" << std::hex << static_cast<int>(markerCode) << std::dec << " pos: " << is.tellg();// << std::endl;
+        
+        if (markerCode == 0xd8) {
+            std::cout << "\tSOI Start of Image, skipping byte count" << std::endl;
+            return;
+        }
+        
+        uint16_t segmentBytes;
+        is.read(reinterpret_cast<char*>(&segmentBytes), 2);
+        segmentBytes = htons(segmentBytes);
+        segmentBytes -= 2;
+        
+        std::cout << "\tSegment has " << segmentBytes << " bytes";
+        
+        std::vector<uint8_t> data;
+        data.resize(segmentBytes);
+        is.read(reinterpret_cast<char*>(&data[0]), data.size());
+        
+        switch (markerCode) {
+            case 0xe0:
+                appZeroData(data);
+                break;
+                
+            case 0xdb:
+                quantisationTable(data);
+                break;
+                
+            case 0xc0:
+                sofBaselineDCT(data);
+                break;
+                
+            case 0xc4:
+                huffmanTable(data);
+                break;
+                
+            case 0xda:
+                startOfScan(data);
+                break;
+                
+            case 0xdd:
+                restartInterval(data);
+                break;
+                
+            default:
+                std::cout << "\tUnhandled marker segment" << std::endl;
+                break;
+        }
+    }
+}
+
+namespace {
+
+int extend(int v, int t) {
+    auto vt = std::pow(2, t - 1);
+    if (v < vt) {
+        vt = 1 + ((-1) << t);
+        return v + vt;
+    } else {
+        return v;
+    }
+}
+
+}
+
+Jpeg::DataUnit Jpeg::readBlock(HuffmanDecoder& dec, ImageComponentInScan ic, bool resetDC) {
+    static int prevDC = 0;
+    
+    if (resetDC) {
+        prevDC = 0;
+    }
+    
+    DataUnit du;
+    du.fill(0);
+    
+    //first read the DC component. f.2.2.1
+    dec.setTable(&_huffmanTablesDC.at(ic._td));
+    uint8_t t = dec.nextByte();
+    if (t > 15) throw std::runtime_error("syntax error, dc ssss great than 15");
+    auto diffReceive = dec.nextXBits(t);
+    prevDC += extend(diffReceive, t);
+    du[0] = prevDC;
+    
+    //read ac coefficients. f.2.2.2
+    dec.setTable(&_huffmanTablesAC.at(ic._ta));
+    size_t k = 0;
+    do {
+        k++;
+        uint8_t rs = dec.nextByte();
+        if (rs == 0x00) {
+            //EOB. All remaining coefficients are zero.
+            break;
+        }
+        else if (rs == 0xF0) {
+            //ZRL. Skip 15 zero coefficients and this one is also zero.
+            k += 16;
+        } else {
+            uint8_t r = rs >> 4;
+            k += r;
+            
+            uint8_t ssss = rs & 0x0F;
+            auto receive = dec.nextXBits(ssss);
+            auto res = extend(receive, ssss);
+            std::cout << "res: " << static_cast<int>(res) << std::endl;
+//            uint8_t zz = deZigZag(k);
+//            du[zz] = res;
+            du[k] = res;
+        }
+    } while (k < 63);
+    
+    return du;
+}
+
+uint8_t Jpeg::deZigZag(uint8_t index) {
+    const uint8_t zigzagTable[] = {
+        0,   1,  8, 16,  9,  2,  3, 10,
+        17, 24, 32, 25, 18, 11,  4,  5,
+        12, 19, 26, 33, 40, 48, 41, 34,
+        27, 20, 13,  6,  7, 14, 21, 28,
+        35, 42, 49, 56, 57, 50, 43, 36,
+        29, 22, 15, 23, 30, 37, 44, 51,
+        58, 59, 52, 45, 38, 31, 39, 46,
+        53, 60, 61, 54, 47, 55, 62, 63,
+    };
+    
+    assert(index < 64);
+    
+    return zigzagTable[index];
+}
+
+Jpeg::DataUnit Jpeg::dequantiseBlock(DataUnit du, ImageComponent ic) {
+    DataUnit out;
+    for (uint8_t i = 0; i < du.size(); i++) {
+        out[deZigZag(i)] = (int)du[i] * _quantTables[(int)ic._tq][i];
+    }
+    
+    return out;
+}
+
+Jpeg::DataUnit Jpeg::idct(DataUnit du) {
+    DataUnit out;
+    
+    for (size_t y = 0; y < 8; y++) {
+        for (size_t x = 0; x < 8; x++) {
+            float val = 0.f;
+            
+            for (size_t u = 0; u < 8; u++) {
+                for (size_t v = 0; v < 8; v++) {
+                    float cu = (u == 0) ? (1.f/std::sqrt(2.f)) : 1.f;
+                    float cv = (v == 0) ? (1.f/std::sqrt(2.f)) : 1.f;
+                    val += cu * cv * du[u + v*8]
+                            * std::cos((2.f * x + 1.f) * u * std::numbers::pi / 16.f)
+                            * std::cos((2.f * y + 1.f) * v * std::numbers::pi / 16.f);
+                }
+            }
+            val *= 0.25f;
+            
+            out[x + y * 8] = static_cast<int>(val);
+        }
+    }
+    
+    return out;
+}
+
+int adjustAndClamp(float val) {
+    val += 128.f;
+    
+    if (val > 255) {
+        return 255;
+    } else if (val < 0) {
+        return 0;
+    } else {
+        return static_cast<int>(val);
+    }
+}
+
+void Jpeg::readScanData(std::istream &is) {
+    std::cout << "Reading scan data from position: " << is.tellg() << std::endl;
+    
+    std::vector<uint8_t> data;
+    data.resize(2048);
+    is.read(reinterpret_cast<char*>(&data[0]), data.size());
+
+    HuffmanDecoder dec;
+    dec.setData(data);
+    //read data unit 1, 2, 3, 4 of image component 1
+    auto ic = _imageComponentsInScan.at(0);
+    if (ic._cs != 1) throw std::runtime_error("wrong image component");
+    
+    std::vector<DataUnit> ic1;
+
+    ic1.push_back(idct(dequantiseBlock(readBlock(dec, ic, false), _imageComponents.at(0))));
+    ic1.push_back(idct(dequantiseBlock(readBlock(dec, ic, false), _imageComponents.at(0))));
+    ic1.push_back(idct(dequantiseBlock(readBlock(dec, ic, false), _imageComponents.at(0))));
+    ic1.push_back(idct(dequantiseBlock(readBlock(dec, ic, false), _imageComponents.at(0))));
+    
+    auto ic20 = idct(dequantiseBlock(readBlock(dec, _imageComponentsInScan.at(1), true), _imageComponents.at(1)));
+    
+    auto ic30 = idct(dequantiseBlock(readBlock(dec, _imageComponentsInScan.at(2), true), _imageComponents.at(2)));
+    
+    std::array<Colour, 16*16> mcuYCbCr;
+    for (size_t y = 0; y < 16; y++) {
+        for (size_t x = 0; x < 16; x++) {
+            auto ic1du = ic1.at(x / 8 + (y / 8)*2);
+            auto ic1x = x % 8;
+            auto ic1y = y % 8;
+            auto luma = ic1du.at(ic1x + ic1y * 8);
+            
+            auto ic2x = x / 2;
+            auto ic2y = y / 2;
+            auto cb = ic20.at(ic2x + ic2y * 8);
+            
+            auto ic3x = x / 2;
+            auto ic3y = y / 2;
+            auto cr = ic30.at(ic3x + ic3y * 8);
+            
+            mcuYCbCr[x + y*16] = std::make_tuple(luma, cb, cr);
+        }
+    }
+    
+    std::array<Colour, 16*16> mcuRGB;
+    for (size_t i = 0; i < mcuYCbCr.size(); i++) {
+        Colour ybr = mcuYCbCr[i];
+        float y = std::get<0>(mcuYCbCr[i]);
+        float cb = std::get<1>(mcuYCbCr[i]);
+        float cr = std::get<2>(mcuYCbCr[i]);
+        auto r = adjustAndClamp(y + (1.402f * cr));
+        auto g = adjustAndClamp(y - (0.34414f * cb) - (0.71414f * cr));
+        auto b = adjustAndClamp(y + (1.772f * cb));
+        mcuRGB[i] = std::make_tuple(r, g, b);
+    }
+    
+    std::ofstream file;
+    file.open("/tmp/jpeg.ppm");
+    
+    if (!file.is_open()) {
+        abort();
+    }
+    
+    file << "P3" << std::endl;
+    file << "16" << " " << "16" << std::endl;
+    file << "255" << std::endl;
+     
+     for (size_t y = 0; y < 16; y++) {
+         for (size_t x = 0; x < 16; x++) {
+             auto pixel = mcuRGB[x + y * 16];
+             
+             file << std::to_string(std::get<0>(pixel)) << " "
+                  << std::to_string(std::get<1>(pixel)) << " "
+                  << std::to_string(std::get<2>(pixel)) << " ";
+         }
+         
+         file << std::endl;
+     }
+    
+    file.close();
+    
+    abort();
 }
 
 void Jpeg::appZeroData(std::vector<uint8_t> &data) {
@@ -191,8 +411,7 @@ void Jpeg::startOfScan(std::vector<uint8_t> &data) {
         throw std::logic_error("Start of scan end parameters not set for Sequential DCT");
     }
     
-    afterComponents += 3;
-    std::span followingData{&data[afterComponents], data.size() - afterComponents };
+    _inScan = true;
 }
 
 void Jpeg::restartInterval(std::vector<uint8_t> &data) {
