@@ -18,7 +18,7 @@ TEST(Default, helloWorld) {
     EXPECT_EQ(a, "Hello World!");
 }
 
-TEST(Huffman, ReadData) {
+TEST(HuffmanTable, ReadData) {
     std::vector<uint8_t> data = {
         '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01',
         '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0',
@@ -34,8 +34,12 @@ TEST(Huffman, ReadData) {
     EXPECT_EQ(table._huffval, huffvalsExpected);
 }
 
-TEST(Huffman, CalculateData) {
-    std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
+TEST(HuffmanTable, CalculateData) {
+    std::vector<uint8_t> data = {
+        '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01',
+        '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0',
+        '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a',
+        '\b', '\t', '\n', '\v'};
     
     auto table = HuffmanTable::build(data);
     
