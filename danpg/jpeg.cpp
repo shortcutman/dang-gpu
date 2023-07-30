@@ -142,9 +142,6 @@ Jpeg::DataUnit Jpeg::readBlock(BitDecoder& dec, ImageComponentInScan ic, bool re
             uint8_t ssss = rs & 0x0F;
             auto receive = dec.nextXBits(ssss);
             auto res = extend(receive, ssss);
-            std::cout << "res: " << static_cast<int>(res) << std::endl;
-//            uint8_t zz = deZigZag(k);
-//            du[zz] = res;
             du[k] = res;
         }
     } while (k < 63);
