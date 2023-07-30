@@ -54,7 +54,7 @@ public:
     
     void readData(std::istream& is);
     void readScanData(std::istream& is);
-    DataUnit readBlock(HuffmanDecoder& dec, ImageComponentInScan ic, bool resetDC);
+    DataUnit readBlock(BitDecoder& dec, ImageComponentInScan ic, bool resetDC);
     uint8_t deZigZag(uint8_t index);
     DataUnit dequantiseBlock(DataUnit du, ImageComponent ic);
     DataUnit idct(DataUnit du);

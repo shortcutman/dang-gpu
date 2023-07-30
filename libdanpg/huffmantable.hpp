@@ -25,7 +25,7 @@ public:
     static HuffmanTable build(std::span<uint8_t> data);
 };
 
-class HuffmanDecoder {
+class BitDecoder {
 private:
     HuffmanTable* _table = nullptr;
     uint8_t _bits = 0;

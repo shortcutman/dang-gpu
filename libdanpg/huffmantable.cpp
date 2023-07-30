@@ -69,19 +69,19 @@ HuffmanTable HuffmanTable::build(std::span<uint8_t> data) {
     return table;
 }
 
-void HuffmanDecoder::setTable(HuffmanTable *table) {
+void BitDecoder::setTable(HuffmanTable *table) {
     _table = table;
 }
 
-void HuffmanDecoder::setData(std::span<uint8_t> data) {
+void BitDecoder::setData(std::span<uint8_t> data) {
     _data = data;
 }
 
-size_t HuffmanDecoder::offset() const {
+size_t BitDecoder::offset() const {
     return _offset;
 }
 
-uint8_t HuffmanDecoder::nextByte() {
+uint8_t BitDecoder::nextByte() {
     uint16_t potentialCode = getNext16bits();
     uint8_t numberOfBits = _table->_huffsize.front();
     uint16_t mask = 0xFFFF << (16 - numberOfBits);
@@ -104,14 +104,14 @@ uint8_t HuffmanDecoder::nextByte() {
     return 0;
 }
 
-uint16_t HuffmanDecoder::nextXBits(size_t bits) {
+uint16_t BitDecoder::nextXBits(size_t bits) {
     uint16_t value = getNext16bits();
     uint16_t mask = 0xFFFF << (16 - bits);
     advanceBits(bits);
     return (value & mask) >> (16 - bits);
 }
 
-uint16_t HuffmanDecoder::getNext16bits() {
+uint16_t BitDecoder::getNext16bits() {
     uint16_t next16 = _data[_offset] << (8 + _bits);
     
     if ((next16 & 0xFF00) == 0xFF00) {
@@ -134,7 +134,7 @@ uint16_t HuffmanDecoder::getNext16bits() {
     return next16;
 }
 
-void HuffmanDecoder::advanceBits(uint8_t bits) {
+void BitDecoder::advanceBits(uint8_t bits) {
     _bits += bits;
     if (_bits >= 8) {
         _offset++;

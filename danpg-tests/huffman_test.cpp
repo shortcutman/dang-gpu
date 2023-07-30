@@ -48,7 +48,7 @@ TEST(Huffman, CalculateData) {
 TEST(HuffmanDecoder, Decode2bit) {
     std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
     HuffmanTable table = HuffmanTable::build(data);
-    HuffmanDecoder decoder;
+    BitDecoder decoder;
     decoder.setTable(&table);
     
     std::vector<uint8_t> encoded = {0x00};
@@ -60,7 +60,7 @@ TEST(HuffmanDecoder, Decode2bit) {
 TEST(HuffmanDecoder, Decode3bit) {
     std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
     HuffmanTable table = HuffmanTable::build(data);
-    HuffmanDecoder decoder;
+    BitDecoder decoder;
     decoder.setTable(&table);
     
     std::vector<uint8_t> encoded = {0x80};
@@ -72,7 +72,7 @@ TEST(HuffmanDecoder, Decode3bit) {
 TEST(HuffmanDecoder, Decode4bit) {
     std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
     HuffmanTable table = HuffmanTable::build(data);
-    HuffmanDecoder decoder;
+    BitDecoder decoder;
     decoder.setTable(&table);
     
     std::vector<uint8_t> encoded = {0xE0};
@@ -84,7 +84,7 @@ TEST(HuffmanDecoder, Decode4bit) {
 TEST(HuffmanDecoder, Decode5bit) {
     std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
     HuffmanTable table = HuffmanTable::build(data);
-    HuffmanDecoder decoder;
+    BitDecoder decoder;
     decoder.setTable(&table);
     
     std::vector<uint8_t> encoded = {0xF0};
@@ -96,7 +96,7 @@ TEST(HuffmanDecoder, Decode5bit) {
 TEST(HuffmanDecoder, Decode6bit) {
     std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
     HuffmanTable table = HuffmanTable::build(data);
-    HuffmanDecoder decoder;
+    BitDecoder decoder;
     decoder.setTable(&table);
     
     std::vector<uint8_t> encoded = {0xF8};
@@ -108,7 +108,7 @@ TEST(HuffmanDecoder, Decode6bit) {
 TEST(HuffmanDecoder, Decode7bit) {
     std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
     HuffmanTable table = HuffmanTable::build(data);
-    HuffmanDecoder decoder;
+    BitDecoder decoder;
     decoder.setTable(&table);
     
     std::vector<uint8_t> encoded = {0xFC};
@@ -120,7 +120,7 @@ TEST(HuffmanDecoder, Decode7bit) {
 TEST(HuffmanDecoder, Decode8bit) {
     std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
     HuffmanTable table = HuffmanTable::build(data);
-    HuffmanDecoder decoder;
+    BitDecoder decoder;
     decoder.setTable(&table);
     
     std::vector<uint8_t> encoded = {0xFE};
@@ -132,7 +132,7 @@ TEST(HuffmanDecoder, Decode8bit) {
 TEST(HuffmanDecoder, Decode9bit) {
     std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
     HuffmanTable table = HuffmanTable::build(data);
-    HuffmanDecoder decoder;
+    BitDecoder decoder;
     decoder.setTable(&table);
     
     std::vector<uint8_t> encoded = {0xFF, 0x00};
@@ -144,7 +144,7 @@ TEST(HuffmanDecoder, Decode9bit) {
 TEST(HuffmanDecoder, Decode3bitThen3bit) {
     std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
     HuffmanTable table = HuffmanTable::build(data);
-    HuffmanDecoder decoder;
+    BitDecoder decoder;
     decoder.setTable(&table);
     
     // code b100: val 0x03, code b101 : val 0x4, b00 padding
@@ -160,7 +160,7 @@ TEST(HuffmanDecoder, Decode3bitThen3bit) {
 TEST(HuffmanDecoder, Decode3bitThen9bit) {
     std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
     HuffmanTable table = HuffmanTable::build(data);
-    HuffmanDecoder decoder;
+    BitDecoder decoder;
     decoder.setTable(&table);
     
     // code b100: val 0x03, code b1 1111 1110 : val 0xb, b0000 padding
@@ -176,7 +176,7 @@ TEST(HuffmanDecoder, Decode3bitThen9bit) {
 TEST(HuffmanDecoder, Decode9bitThen3bit) {
     std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
     HuffmanTable table = HuffmanTable::build(data);
-    HuffmanDecoder decoder;
+    BitDecoder decoder;
     decoder.setTable(&table);
     
     // code b1 1111 1110 : val 0xb, code b100: val 0x03, b0000 padding
@@ -192,7 +192,7 @@ TEST(HuffmanDecoder, Decode9bitThen3bit) {
 TEST(HuffmanDecoder, Decode9bitThen9bit) {
     std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
     HuffmanTable table = HuffmanTable::build(data);
-    HuffmanDecoder decoder;
+    BitDecoder decoder;
     decoder.setTable(&table);
     
     // code b1 1111 1110 : val 0xb, code b1 1111 1110 : val 0xb, b00 0000 1111 1111 padding
@@ -208,7 +208,7 @@ TEST(HuffmanDecoder, Decode9bitThen9bit) {
 TEST(HuffmanDecoder, Decode6bitThen9bit) {
     std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
     HuffmanTable table = HuffmanTable::build(data);
-    HuffmanDecoder decoder;
+    BitDecoder decoder;
     decoder.setTable(&table);
     
     // code b111110: val 0x08, code b1 1111 1110 : val 0xb, b00 0000 0000 padding
@@ -224,7 +224,7 @@ TEST(HuffmanDecoder, Decode6bitThen9bit) {
 TEST(HuffmanDecoder, DecodeMarkerSegmentException) {
     std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
     HuffmanTable table = HuffmanTable::build(data);
-    HuffmanDecoder decoder;
+    BitDecoder decoder;
     decoder.setTable(&table);
     
     std::vector<uint8_t> encoded = {0xFF, 0xD0};
@@ -235,7 +235,7 @@ TEST(HuffmanDecoder, DecodeMarkerSegmentException) {
 TEST(HuffmanDecoder, Decode3bitSkip3Then3bit) {
     std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
     HuffmanTable table = HuffmanTable::build(data);
-    HuffmanDecoder decoder;
+    BitDecoder decoder;
     decoder.setTable(&table);
     
     // code b100: val 0x03, b111 direct, code b101 : val 0x4, b000 0000 padding

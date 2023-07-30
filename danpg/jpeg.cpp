@@ -104,7 +104,7 @@ int extend(int v, int t) {
 
 }
 
-Jpeg::DataUnit Jpeg::readBlock(HuffmanDecoder& dec, ImageComponentInScan ic, bool resetDC) {
+Jpeg::DataUnit Jpeg::readBlock(BitDecoder& dec, ImageComponentInScan ic, bool resetDC) {
     static int prevDC = 0;
     
     if (resetDC) {
@@ -222,7 +222,7 @@ void Jpeg::readScanData(std::istream &is) {
     data.resize(2048);
     is.read(reinterpret_cast<char*>(&data[0]), data.size());
 
-    HuffmanDecoder dec;
+    BitDecoder dec;
     dec.setData(data);
     //read data unit 1, 2, 3, 4 of image component 1
     auto ic = _imageComponentsInScan.at(0);
