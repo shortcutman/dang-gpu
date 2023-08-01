@@ -13,7 +13,7 @@
 #include "huffmantable.hpp"
 
 class Jpeg {
-private:
+public:
     std::vector<uint8_t> _identifier;
     uint16_t _version;
     uint8_t _units;
@@ -51,6 +51,7 @@ private:
     
 public:
     Jpeg(std::istream& is);
+    Jpeg();
     
     void readData(std::istream& is);
     void readScanData(std::istream& is);

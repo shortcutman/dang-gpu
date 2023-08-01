@@ -36,6 +36,10 @@ Jpeg::Jpeg(std::istream& is) {
     }
 }
 
+Jpeg::Jpeg() {
+    
+}
+
 void Jpeg::readData(std::istream& is) {
     uint8_t step = is.get();
     if (step == 0xff) {
