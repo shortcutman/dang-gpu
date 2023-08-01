@@ -76,96 +76,56 @@ TEST_F(HuffmanDecoderTest, Decode2bit) {
     EXPECT_EQ(byte, 0x00);
 }
 
-TEST(HuffmanDecoder, Decode3bit) {
-    std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
-    HuffmanTable table = HuffmanTable::build(data);
-    BitDecoder decoder;
-    decoder.setTable(&table);
-    
+TEST_F(HuffmanDecoderTest, Decode3bit) {
     std::vector<uint8_t> encoded = {0x80};
     decoder.setData(encoded);
     auto byte = decoder.nextByte();
     EXPECT_EQ(byte, 0x03);
 }
 
-TEST(HuffmanDecoder, Decode4bit) {
-    std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
-    HuffmanTable table = HuffmanTable::build(data);
-    BitDecoder decoder;
-    decoder.setTable(&table);
-    
+TEST_F(HuffmanDecoderTest, Decode4bit) {
     std::vector<uint8_t> encoded = {0xE0};
     decoder.setData(encoded);
     auto byte = decoder.nextByte();
     EXPECT_EQ(byte, 0x06);
 }
 
-TEST(HuffmanDecoder, Decode5bit) {
-    std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
-    HuffmanTable table = HuffmanTable::build(data);
-    BitDecoder decoder;
-    decoder.setTable(&table);
-    
+TEST_F(HuffmanDecoderTest, Decode5bit) {
     std::vector<uint8_t> encoded = {0xF0};
     decoder.setData(encoded);
     auto byte = decoder.nextByte();
     EXPECT_EQ(byte, 0x07);
 }
 
-TEST(HuffmanDecoder, Decode6bit) {
-    std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
-    HuffmanTable table = HuffmanTable::build(data);
-    BitDecoder decoder;
-    decoder.setTable(&table);
-    
+TEST_F(HuffmanDecoderTest, Decode6bit) {
     std::vector<uint8_t> encoded = {0xF8};
     decoder.setData(encoded);
     auto byte = decoder.nextByte();
     EXPECT_EQ(byte, 0x08);
 }
 
-TEST(HuffmanDecoder, Decode7bit) {
-    std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
-    HuffmanTable table = HuffmanTable::build(data);
-    BitDecoder decoder;
-    decoder.setTable(&table);
-    
+TEST_F(HuffmanDecoderTest, Decode7bit) {
     std::vector<uint8_t> encoded = {0xFC};
     decoder.setData(encoded);
     auto byte = decoder.nextByte();
     EXPECT_EQ(byte, 0x09);
 }
 
-TEST(HuffmanDecoder, Decode8bit) {
-    std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
-    HuffmanTable table = HuffmanTable::build(data);
-    BitDecoder decoder;
-    decoder.setTable(&table);
-    
+TEST_F(HuffmanDecoderTest, Decode8bit) {
     std::vector<uint8_t> encoded = {0xFE};
     decoder.setData(encoded);
     auto byte = decoder.nextByte();
     EXPECT_EQ(byte, 0x0a);
 }
 
-TEST(HuffmanDecoder, Decode9bit) {
-    std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
-    HuffmanTable table = HuffmanTable::build(data);
-    BitDecoder decoder;
-    decoder.setTable(&table);
-    
+TEST_F(HuffmanDecoderTest, Decode9bit) {
     std::vector<uint8_t> encoded = {0xFF, 0x00};
     decoder.setData(encoded);
     auto byte = decoder.nextByte();
     EXPECT_EQ(byte, 0x0b);
 }
 
-TEST(HuffmanDecoder, Decode3bitThen3bit) {
-    std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
-    HuffmanTable table = HuffmanTable::build(data);
-    BitDecoder decoder;
-    decoder.setTable(&table);
-    
+TEST_F(HuffmanDecoderTest, Decode3bitThen3bit) {
     // code b100: val 0x03, code b101 : val 0x4, b00 padding
     std::vector<uint8_t> encoded = {0x94};
     decoder.setData(encoded);
@@ -176,12 +136,7 @@ TEST(HuffmanDecoder, Decode3bitThen3bit) {
     EXPECT_EQ(byte, 0x04);
 }
 
-TEST(HuffmanDecoder, Decode3bitThen9bit) {
-    std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
-    HuffmanTable table = HuffmanTable::build(data);
-    BitDecoder decoder;
-    decoder.setTable(&table);
-    
+TEST_F(HuffmanDecoderTest, Decode3bitThen9bit) {
     // code b100: val 0x03, code b1 1111 1110 : val 0xb, b0000 padding
     std::vector<uint8_t> encoded = {0x9F, 0xE0};
     decoder.setData(encoded);
@@ -192,12 +147,7 @@ TEST(HuffmanDecoder, Decode3bitThen9bit) {
     EXPECT_EQ(byte, 0x0b);
 }
 
-TEST(HuffmanDecoder, Decode9bitThen3bit) {
-    std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
-    HuffmanTable table = HuffmanTable::build(data);
-    BitDecoder decoder;
-    decoder.setTable(&table);
-    
+TEST_F(HuffmanDecoderTest, Decode9bitThen3bit) {
     // code b1 1111 1110 : val 0xb, code b100: val 0x03, b0000 padding
     std::vector<uint8_t> encoded = {0xFF, 0x00, 0x40};
     decoder.setData(encoded);
@@ -208,12 +158,7 @@ TEST(HuffmanDecoder, Decode9bitThen3bit) {
     EXPECT_EQ(byte, 0x03);
 }
 
-TEST(HuffmanDecoder, Decode9bitThen9bit) {
-    std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
-    HuffmanTable table = HuffmanTable::build(data);
-    BitDecoder decoder;
-    decoder.setTable(&table);
-    
+TEST_F(HuffmanDecoderTest, Decode9bitThen9bit) {
     // code b1 1111 1110 : val 0xb, code b1 1111 1110 : val 0xb, b00 0000 1111 1111 padding
     std::vector<uint8_t> encoded = {0xFF, 0x00, 0x7F, 0x80};
     decoder.setData(encoded);
@@ -224,12 +169,7 @@ TEST(HuffmanDecoder, Decode9bitThen9bit) {
     EXPECT_EQ(byte, 0x0b);
 }
 
-TEST(HuffmanDecoder, Decode6bitThen9bit) {
-    std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
-    HuffmanTable table = HuffmanTable::build(data);
-    BitDecoder decoder;
-    decoder.setTable(&table);
-    
+TEST_F(HuffmanDecoderTest, Decode6bitThen9bit) {
     // code b111110: val 0x08, code b1 1111 1110 : val 0xb, b00 0000 0000 padding
     std::vector<uint8_t> encoded = {0xFB, 0xFC, 0x00};
     decoder.setData(encoded);
@@ -240,23 +180,13 @@ TEST(HuffmanDecoder, Decode6bitThen9bit) {
     EXPECT_EQ(byte, 0x0b);
 }
 
-TEST(HuffmanDecoder, DecodeMarkerSegmentException) {
-    std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
-    HuffmanTable table = HuffmanTable::build(data);
-    BitDecoder decoder;
-    decoder.setTable(&table);
-    
+TEST_F(HuffmanDecoderTest, DecodeMarkerSegmentException) {
     std::vector<uint8_t> encoded = {0xFF, 0xD0};
     decoder.setData(encoded);
     EXPECT_THROW(decoder.nextByte(), std::runtime_error);
 }
 
-TEST(HuffmanDecoder, Decode3bitSkip3Then3bit) {
-    std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
-    HuffmanTable table = HuffmanTable::build(data);
-    BitDecoder decoder;
-    decoder.setTable(&table);
-    
+TEST_F(HuffmanDecoderTest, Decode3bitSkip3Then3bit) {
     // code b100: val 0x03, b111 direct, code b101 : val 0x4, b000 0000 padding
     std::vector<uint8_t> encoded = {0x9E, 0x80};
     decoder.setData(encoded);
