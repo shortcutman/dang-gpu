@@ -53,12 +53,23 @@ TEST(HuffmanTable, CalculateData) {
     EXPECT_EQ(table._huffcode, huffcodeExpected);
 }
 
-TEST(HuffmanDecoder, Decode2bit) {
-    std::vector<uint8_t> data = {'\0', '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01', '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a', '\b', '\t', '\n', '\v'};
+class HuffmanDecoderTest : public ::testing::Test {
+protected:
+    void SetUp() override {
+        decoder.setTable(&table);
+    }
+    
+    std::vector<uint8_t> data = {
+        '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01',
+        '\x01', '\0', '\0', '\0', '\0', '\0', '\0', '\0',
+        '\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\a',
+        '\b', '\t', '\n', '\v'
+    };
     HuffmanTable table = HuffmanTable::build(data);
     BitDecoder decoder;
-    decoder.setTable(&table);
-    
+};
+
+TEST_F(HuffmanDecoderTest, Decode2bit) {
     std::vector<uint8_t> encoded = {0x00};
     decoder.setData(encoded);
     auto byte = decoder.nextByte();
