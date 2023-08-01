@@ -12,12 +12,6 @@
 
 namespace {
 
-TEST(Default, helloWorld) {
-    const std::string a = "Hello World!";
-    
-    EXPECT_EQ(a, "Hello World!");
-}
-
 TEST(HuffmanTable, ReadData) {
     std::vector<uint8_t> data = {
         '\0', '\x01', '\x05', '\x01', '\x01', '\x01', '\x01', '\x01',
