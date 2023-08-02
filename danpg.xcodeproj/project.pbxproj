@@ -8,8 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		65518FEC2A0129F000F2D094 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65518FEB2A0129F000F2D094 /* main.cpp */; };
-		659BFE5E2A791E240031D35A /* jpeg_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 659BFE5D2A791E240031D35A /* jpeg_test.cpp */; };
+		659BFE5E2A791E240031D35A /* idct_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 659BFE5D2A791E240031D35A /* idct_test.cpp */; };
 		659BFE5F2A791F430031D35A /* jpeg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65518FF32A012A9700F2D094 /* jpeg.cpp */; };
+		659BFE622A7A68920031D35A /* idct.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 659BFE602A7A68920031D35A /* idct.cpp */; };
+		659BFE632A7A68920031D35A /* idct.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 659BFE612A7A68920031D35A /* idct.hpp */; };
 		65A3DB932A36FA50001158DA /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65A3DB922A36FA50001158DA /* main.cpp */; };
 		65A3DBA72A36FA7C001158DA /* liblibdanpg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 65A3DB9B2A36FA67001158DA /* liblibdanpg.a */; };
 		65A3DBAB2A36FB77001158DA /* huffman_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65A3DBAA2A36FB77001158DA /* huffman_test.cpp */; };
@@ -62,7 +64,9 @@
 		65518FF22A012A1100F2D094 /* testimage.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = testimage.jpg; sourceTree = "<group>"; };
 		65518FF32A012A9700F2D094 /* jpeg.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = jpeg.cpp; sourceTree = "<group>"; };
 		65518FF42A012A9700F2D094 /* jpeg.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = jpeg.hpp; sourceTree = "<group>"; };
-		659BFE5D2A791E240031D35A /* jpeg_test.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = jpeg_test.cpp; sourceTree = "<group>"; };
+		659BFE5D2A791E240031D35A /* idct_test.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = idct_test.cpp; sourceTree = "<group>"; };
+		659BFE602A7A68920031D35A /* idct.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = idct.cpp; sourceTree = "<group>"; };
+		659BFE612A7A68920031D35A /* idct.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = idct.hpp; sourceTree = "<group>"; };
 		65A3DB902A36FA50001158DA /* danpg-tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "danpg-tests"; sourceTree = BUILT_PRODUCTS_DIR; };
 		65A3DB922A36FA50001158DA /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		65A3DB9B2A36FA67001158DA /* liblibdanpg.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = liblibdanpg.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -133,7 +137,7 @@
 			children = (
 				65A3DB922A36FA50001158DA /* main.cpp */,
 				65A3DBAA2A36FB77001158DA /* huffman_test.cpp */,
-				659BFE5D2A791E240031D35A /* jpeg_test.cpp */,
+				659BFE5D2A791E240031D35A /* idct_test.cpp */,
 			);
 			path = "danpg-tests";
 			sourceTree = "<group>";
@@ -145,6 +149,8 @@
 				65518FF42A012A9700F2D094 /* jpeg.hpp */,
 				65A3DBAC2A36FBC8001158DA /* huffmantable.cpp */,
 				65A3DBAD2A36FBC8001158DA /* huffmantable.hpp */,
+				659BFE602A7A68920031D35A /* idct.cpp */,
+				659BFE612A7A68920031D35A /* idct.hpp */,
 			);
 			path = libdanpg;
 			sourceTree = "<group>";
@@ -163,6 +169,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				659BFE632A7A68920031D35A /* idct.hpp in Headers */,
 				65A3DBAF2A36FBC8001158DA /* huffmantable.hpp in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -278,7 +285,7 @@
 			files = (
 				65A3DB932A36FA50001158DA /* main.cpp in Sources */,
 				65A3DBAB2A36FB77001158DA /* huffman_test.cpp in Sources */,
-				659BFE5E2A791E240031D35A /* jpeg_test.cpp in Sources */,
+				659BFE5E2A791E240031D35A /* idct_test.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -288,6 +295,7 @@
 			files = (
 				65A3DBAE2A36FBC8001158DA /* huffmantable.cpp in Sources */,
 				659BFE5F2A791F430031D35A /* jpeg.cpp in Sources */,
+				659BFE622A7A68920031D35A /* idct.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
