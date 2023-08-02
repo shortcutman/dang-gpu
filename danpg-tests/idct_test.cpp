@@ -1,5 +1,5 @@
 //
-//  jpeg_test.cpp
+//  idct_test.cpp
 //  danpg-tests
 //
 //  Created by Daniel Burke on 1/8/2023.
