@@ -34,3 +34,9 @@ Colour image::ycbcrToRGB(const Colour& ycbcr) {
     auto b = adjustAndClamp(y + (1.772f * cb));
     return std::make_tuple(r, g, b);
 }
+
+void image::ycbcrToRGBInPlace(std::span<Colour> data) {
+    for (auto& c : data) {
+        c = ycbcrToRGB(c);
+    }
+}

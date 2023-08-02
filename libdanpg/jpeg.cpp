@@ -208,7 +208,7 @@ void Jpeg::readScanData(std::istream &is) {
     
     auto ic30 = idct(dequantiseBlock(readBlock(dec, _imageComponentsInScan.at(2), true), _imageComponents.at(2)));
     
-    std::array<Colour, 16*16> mcuYCbCr;
+    std::array<Colour, 16*16> pixels;
     for (size_t y = 0; y < 16; y++) {
         for (size_t x = 0; x < 16; x++) {
             auto ic1du = ic1.at(x / 8 + (y / 8)*2);
@@ -224,14 +224,11 @@ void Jpeg::readScanData(std::istream &is) {
             auto ic3y = y / 2;
             auto cr = ic30.at(ic3x + ic3y * 8);
             
-            mcuYCbCr[x + y*16] = std::make_tuple(luma, cb, cr);
+            pixels[x + y*16] = std::make_tuple(luma, cb, cr);
         }
     }
     
-    std::array<Colour, 16*16> mcuRGB;
-    for (size_t i = 0; i < mcuYCbCr.size(); i++) {
-        mcuRGB[i] = ycbcrToRGB(mcuYCbCr[i]);
-    }
+    ycbcrToRGBInPlace(pixels);
     
     std::ofstream file;
     file.open("/tmp/jpeg.ppm");
@@ -246,7 +243,7 @@ void Jpeg::readScanData(std::istream &is) {
      
      for (size_t y = 0; y < 16; y++) {
          for (size_t x = 0; x < 16; x++) {
-             auto pixel = mcuRGB[x + y * 16];
+             auto pixel = pixels[x + y * 16];
              
              file << std::to_string(std::get<0>(pixel)) << " "
                   << std::to_string(std::get<1>(pixel)) << " "

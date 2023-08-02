@@ -8,6 +8,7 @@
 #ifndef colour_hpp
 #define colour_hpp
 
+#include <span>
 #include <tuple>
 
 namespace image {
@@ -15,6 +16,7 @@ namespace image {
 typedef std::tuple<int, int, int> Colour;
 
 Colour ycbcrToRGB(const Colour& ycbcr);
+void ycbcrToRGBInPlace(std::span<Colour> data);
 
 }
 
