@@ -184,18 +184,6 @@ Jpeg::DataUnit Jpeg::dequantiseBlock(DataUnit du, ImageComponent ic) {
     return out;
 }
 
-int adjustAndClamp(float val) {
-    val += 128.f;
-    
-    if (val > 255) {
-        return 255;
-    } else if (val < 0) {
-        return 0;
-    } else {
-        return static_cast<int>(val);
-    }
-}
-
 void Jpeg::readScanData(std::istream &is) {
     std::cout << "Reading scan data from position: " << is.tellg() << std::endl;
     
