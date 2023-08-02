@@ -7,6 +7,7 @@
 
 #include "jpeg.hpp"
 
+#include "colour.hpp"
 #include "idct.hpp"
 
 #include <cstddef>
@@ -241,14 +242,7 @@ void Jpeg::readScanData(std::istream &is) {
     
     std::array<Colour, 16*16> mcuRGB;
     for (size_t i = 0; i < mcuYCbCr.size(); i++) {
-        Colour ybr = mcuYCbCr[i];
-        float y = std::get<0>(mcuYCbCr[i]);
-        float cb = std::get<1>(mcuYCbCr[i]);
-        float cr = std::get<2>(mcuYCbCr[i]);
-        auto r = adjustAndClamp(y + (1.402f * cr));
-        auto g = adjustAndClamp(y - (0.34414f * cb) - (0.71414f * cr));
-        auto b = adjustAndClamp(y + (1.772f * cb));
-        mcuRGB[i] = std::make_tuple(r, g, b);
+        mcuRGB[i] = ycbcrToRGB(mcuYCbCr[i]);
     }
     
     std::ofstream file;

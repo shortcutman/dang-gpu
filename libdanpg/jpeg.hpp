@@ -46,7 +46,6 @@ public:
     std::vector<ImageComponentInScan> _imageComponentsInScan;
     
     typedef std::array<int, 8*8> DataUnit;
-    typedef std::tuple<int, int, int> Colour;
     
     size_t _numberOfMCU = 0;
     bool _inScan = false;

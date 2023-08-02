@@ -12,6 +12,9 @@
 		659BFE5F2A791F430031D35A /* jpeg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65518FF32A012A9700F2D094 /* jpeg.cpp */; };
 		659BFE622A7A68920031D35A /* idct.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 659BFE602A7A68920031D35A /* idct.cpp */; };
 		659BFE632A7A68920031D35A /* idct.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 659BFE612A7A68920031D35A /* idct.hpp */; };
+		659BFE662A7A69D10031D35A /* colour.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 659BFE642A7A69D10031D35A /* colour.cpp */; };
+		659BFE672A7A69D10031D35A /* colour.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 659BFE652A7A69D10031D35A /* colour.hpp */; };
+		659BFE692A7A6B0D0031D35A /* colour_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 659BFE682A7A6B0D0031D35A /* colour_test.cpp */; };
 		65A3DB932A36FA50001158DA /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65A3DB922A36FA50001158DA /* main.cpp */; };
 		65A3DBA72A36FA7C001158DA /* liblibdanpg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 65A3DB9B2A36FA67001158DA /* liblibdanpg.a */; };
 		65A3DBAB2A36FB77001158DA /* huffman_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65A3DBAA2A36FB77001158DA /* huffman_test.cpp */; };
@@ -67,6 +70,9 @@
 		659BFE5D2A791E240031D35A /* idct_test.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = idct_test.cpp; sourceTree = "<group>"; };
 		659BFE602A7A68920031D35A /* idct.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = idct.cpp; sourceTree = "<group>"; };
 		659BFE612A7A68920031D35A /* idct.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = idct.hpp; sourceTree = "<group>"; };
+		659BFE642A7A69D10031D35A /* colour.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = colour.cpp; sourceTree = "<group>"; };
+		659BFE652A7A69D10031D35A /* colour.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = colour.hpp; sourceTree = "<group>"; };
+		659BFE682A7A6B0D0031D35A /* colour_test.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = colour_test.cpp; sourceTree = "<group>"; };
 		65A3DB902A36FA50001158DA /* danpg-tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "danpg-tests"; sourceTree = BUILT_PRODUCTS_DIR; };
 		65A3DB922A36FA50001158DA /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		65A3DB9B2A36FA67001158DA /* liblibdanpg.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = liblibdanpg.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -138,6 +144,7 @@
 				65A3DB922A36FA50001158DA /* main.cpp */,
 				65A3DBAA2A36FB77001158DA /* huffman_test.cpp */,
 				659BFE5D2A791E240031D35A /* idct_test.cpp */,
+				659BFE682A7A6B0D0031D35A /* colour_test.cpp */,
 			);
 			path = "danpg-tests";
 			sourceTree = "<group>";
@@ -151,6 +158,8 @@
 				65A3DBAD2A36FBC8001158DA /* huffmantable.hpp */,
 				659BFE602A7A68920031D35A /* idct.cpp */,
 				659BFE612A7A68920031D35A /* idct.hpp */,
+				659BFE642A7A69D10031D35A /* colour.cpp */,
+				659BFE652A7A69D10031D35A /* colour.hpp */,
 			);
 			path = libdanpg;
 			sourceTree = "<group>";
@@ -171,6 +180,7 @@
 			files = (
 				659BFE632A7A68920031D35A /* idct.hpp in Headers */,
 				65A3DBAF2A36FBC8001158DA /* huffmantable.hpp in Headers */,
+				659BFE672A7A69D10031D35A /* colour.hpp in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -286,6 +296,7 @@
 				65A3DB932A36FA50001158DA /* main.cpp in Sources */,
 				65A3DBAB2A36FB77001158DA /* huffman_test.cpp in Sources */,
 				659BFE5E2A791E240031D35A /* idct_test.cpp in Sources */,
+				659BFE692A7A6B0D0031D35A /* colour_test.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -296,6 +307,7 @@
 				65A3DBAE2A36FBC8001158DA /* huffmantable.cpp in Sources */,
 				659BFE5F2A791F430031D35A /* jpeg.cpp in Sources */,
 				659BFE622A7A68920031D35A /* idct.cpp in Sources */,
+				659BFE662A7A69D10031D35A /* colour.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
