@@ -17,6 +17,8 @@
 
 #include <arpa/inet.h>
 
+using namespace image;
+
 namespace {
 
 template<typename T>

@@ -19,7 +19,7 @@ int main(int argc, const char * argv[]) {
     } else {
         std::cout << "opened" << std::endl;
         
-        Jpeg jpeg(f);
+        image::Jpeg jpeg(f);
     }
     
     return 0;

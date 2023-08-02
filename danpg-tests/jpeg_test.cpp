@@ -13,7 +13,7 @@
 namespace {
 
 TEST(IDCTTest, InputAndOutputOfLumaFromTestImage) {
-    Jpeg::DataUnit input = {
+    image::Jpeg::DataUnit input = {
         -430, -10, 20, 0, 0, 0, 0, 0,
         20, 0, 0, 0, 0, 0, 0, 0,
         -20, 10, 0, 0, 0, 0, 0, 0,
@@ -23,7 +23,7 @@ TEST(IDCTTest, InputAndOutputOfLumaFromTestImage) {
         0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0
     };
-    Jpeg::DataUnit output = {
+    image::Jpeg::DataUnit output = {
         -49, -51, -54, -56, -56, -55, -52, -50,
         -49, -51, -53, -55, -55, -53, -50, -48,
         -49, -51, -53, -54, -53, -50, -46, -44,
@@ -34,7 +34,7 @@ TEST(IDCTTest, InputAndOutputOfLumaFromTestImage) {
         -56, -58, -61, -63, -63, -62, -59, -57
     };
     
-    Jpeg j;
+    image::Jpeg j;
     auto result = j.idct(input);
     EXPECT_EQ(result, output);
 }

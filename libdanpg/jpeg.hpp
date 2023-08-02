@@ -12,6 +12,8 @@
 
 #include "huffmantable.hpp"
 
+namespace image {
+
 class Jpeg {
 public:
     std::vector<uint8_t> _identifier;
@@ -63,11 +65,13 @@ public:
     void appZeroData(std::vector<uint8_t>& data);
     void quantisationTable(std::vector<uint8_t>& data);
     void huffmanTable(std::vector<uint8_t>& data);
-
+    
     void sofBaselineDCT(std::vector<uint8_t>& data);
     void startOfScan(std::vector<uint8_t>& data);
     void restartInterval(std::vector<uint8_t>& data);
     
 };
+
+}
 
 #endif /* jpeg_hpp */
