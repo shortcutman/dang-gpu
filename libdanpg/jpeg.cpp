@@ -124,7 +124,7 @@ Jpeg::DataUnit Jpeg::readBlock(BitDecoder& dec, ImageComponentInScan ic, bool re
     du.fill(0);
     
     //first read the DC component. f.2.2.1
-    dec.setTable(&_huffmanTablesDC.at(ic._td));
+    dec.setTable(ic._tdTable);
     uint8_t t = dec.nextByte();
     if (t > 15) throw std::runtime_error("syntax error, dc ssss great than 15");
     auto diffReceive = dec.nextXBits(t);
@@ -132,7 +132,7 @@ Jpeg::DataUnit Jpeg::readBlock(BitDecoder& dec, ImageComponentInScan ic, bool re
     du[0] = prevDC;
     
     //read ac coefficients. f.2.2.2
-    dec.setTable(&_huffmanTablesAC.at(ic._ta));
+    dec.setTable(ic._taTable);
     size_t k = 0;
     do {
         k++;
@@ -357,6 +357,9 @@ void Jpeg::startOfScan(std::vector<uint8_t> &data) {
         
         ic._td = *reinterpret_cast<uint8_t*>(&data[byteStart + 1]) >> 4;
         ic._ta = *reinterpret_cast<uint8_t*>(&data[byteStart + 1]) & 0x0F;
+        
+        ic._tdTable = &_huffmanTablesDC.at(ic._td);
+        ic._taTable = &_huffmanTablesDC.at(ic._ta);
         _imageComponentsInScan.push_back(ic);
     }
     size_t afterComponents = 1 + 2 * ns;

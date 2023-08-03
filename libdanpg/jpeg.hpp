@@ -42,6 +42,9 @@ public:
         uint8_t _cs; //scan component selector
         uint8_t _td; //dc entropy coding table destination selector
         uint8_t _ta; //ac entropy coding table destination selector
+        
+        HuffmanTable* _tdTable;
+        HuffmanTable* _taTable;
     };
     std::vector<ImageComponentInScan> _imageComponentsInScan;
     

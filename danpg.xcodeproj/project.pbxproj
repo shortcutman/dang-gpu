@@ -15,6 +15,7 @@
 		659BFE662A7A69D10031D35A /* colour.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 659BFE642A7A69D10031D35A /* colour.cpp */; };
 		659BFE672A7A69D10031D35A /* colour.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 659BFE652A7A69D10031D35A /* colour.hpp */; };
 		659BFE692A7A6B0D0031D35A /* colour_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 659BFE682A7A6B0D0031D35A /* colour_test.cpp */; };
+		659BFE6F2A7A6F070031D35A /* jpeg_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 659BFE6E2A7A6F070031D35A /* jpeg_test.cpp */; };
 		65A3DB932A36FA50001158DA /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65A3DB922A36FA50001158DA /* main.cpp */; };
 		65A3DBA72A36FA7C001158DA /* liblibdanpg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 65A3DB9B2A36FA67001158DA /* liblibdanpg.a */; };
 		65A3DBAB2A36FB77001158DA /* huffman_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65A3DBAA2A36FB77001158DA /* huffman_test.cpp */; };
@@ -73,6 +74,7 @@
 		659BFE642A7A69D10031D35A /* colour.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = colour.cpp; sourceTree = "<group>"; };
 		659BFE652A7A69D10031D35A /* colour.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = colour.hpp; sourceTree = "<group>"; };
 		659BFE682A7A6B0D0031D35A /* colour_test.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = colour_test.cpp; sourceTree = "<group>"; };
+		659BFE6E2A7A6F070031D35A /* jpeg_test.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = jpeg_test.cpp; sourceTree = "<group>"; };
 		65A3DB902A36FA50001158DA /* danpg-tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "danpg-tests"; sourceTree = BUILT_PRODUCTS_DIR; };
 		65A3DB922A36FA50001158DA /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		65A3DB9B2A36FA67001158DA /* liblibdanpg.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = liblibdanpg.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -145,6 +147,7 @@
 				65A3DBAA2A36FB77001158DA /* huffman_test.cpp */,
 				659BFE5D2A791E240031D35A /* idct_test.cpp */,
 				659BFE682A7A6B0D0031D35A /* colour_test.cpp */,
+				659BFE6E2A7A6F070031D35A /* jpeg_test.cpp */,
 			);
 			path = "danpg-tests";
 			sourceTree = "<group>";
@@ -297,6 +300,7 @@
 				65A3DBAB2A36FB77001158DA /* huffman_test.cpp in Sources */,
 				659BFE5E2A791E240031D35A /* idct_test.cpp in Sources */,
 				659BFE692A7A6B0D0031D35A /* colour_test.cpp in Sources */,
+				659BFE6F2A7A6F070031D35A /* jpeg_test.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
