@@ -73,12 +73,10 @@ void BitDecoder::setTable(HuffmanTable *table) {
     _table = table;
 }
 
-void BitDecoder::setData(std::span<uint8_t> data) {
+void BitDecoder::setData(std::istream* data) {
     _data = data;
-}
-
-size_t BitDecoder::offset() const {
-    return _offset;
+    advanceBits(16);
+    advanceBits(16);
 }
 
 uint8_t BitDecoder::nextByte() {
@@ -112,32 +110,34 @@ uint16_t BitDecoder::nextXBits(size_t bits) {
 }
 
 uint16_t BitDecoder::getNext16bits() {
-    uint16_t next16 = _data[_offset] << (8 + _bits);
+    uint16_t next16 = (_currentBytes << _bits) >> 16;
     
-    if ((next16 & 0xFF00) == 0xFF00) {
-        if (_data.size() > 1) {
-            if (_data[_offset + 1] == 0x00) {
-                _offset++; //skip byte stuffing
-            } else {
-                throw std::runtime_error("Encountered marker segment");
-            }
-        }
+    if (next16 == 0xFF00) {
+        uint8_t msb = next16 >> 8;
+        advanceBits(8);
+        _currentBytes |= (uint32_t)msb << 24;
+    } else if ((next16 & 0xFF00) == 0xFF00) {
+        throw std::runtime_error("Encountered marker segement");
     }
-    
-    if (_data.size() >  1) {
-        next16 += _data[_offset + 1] << _bits;
-        if (_data.size() > 2 && _bits > 0) {
-            next16 += _data[_offset + 2] >> (8 - _bits);
-        }
-    }
-    
+
     return next16;
 }
 
 void BitDecoder::advanceBits(uint8_t bits) {
+    if (bits > 16) {
+        throw std::logic_error("Advancing by more than 16 bits not supported");
+    }
+    
     _bits += bits;
-    if (_bits >= 8) {
-        _offset++;
+    
+    while (_bits >= 8) {
+        if (_data->peek() == std::istream::traits_type::eof()) {
+            return;
+        }
+        
+        uint8_t nextByte = _data->get();
+        _currentBytes <<= 8;
+        _currentBytes |= nextByte;
         _bits -= 8;
     }
 }

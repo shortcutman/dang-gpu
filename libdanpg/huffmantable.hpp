@@ -12,6 +12,7 @@
 #include <span>
 #include <vector>
 #include <cstdint>
+#include <istream>
 
 class HuffmanTable {
 public:
@@ -29,13 +30,12 @@ class BitDecoder {
 private:
     HuffmanTable* _table = nullptr;
     uint8_t _bits = 0;
-    size_t _offset = 0;
-    std::span<uint8_t> _data;
+    std::istream* _data = nullptr;
+    uint32_t _currentBytes = 0;
     
 public:
     void setTable(HuffmanTable* table);
-    void setData(std::span<uint8_t> data);
-    size_t offset() const;
+    void setData(std::istream* data);
     
     uint8_t nextByte();
     uint16_t nextXBits(size_t bits);

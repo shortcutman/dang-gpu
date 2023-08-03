@@ -17,6 +17,7 @@
 #include <fstream>
 #include <numbers>
 #include <cmath>
+#include <strstream>
 
 #include <arpa/inet.h>
 
@@ -192,7 +193,8 @@ void Jpeg::readScanData(std::istream &is) {
     is.read(reinterpret_cast<char*>(&data[0]), data.size());
 
     BitDecoder dec;
-    dec.setData(data);
+    std::istrstream is2(reinterpret_cast<const char*>(data.data()), data.size());
+    dec.setData(&is2);
     //read data unit 1, 2, 3, 4 of image component 1
     auto ic = _imageComponentsInScan.at(0);
     if (ic._cs != 1) throw std::runtime_error("wrong image component");

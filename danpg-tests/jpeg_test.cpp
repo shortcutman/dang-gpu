@@ -7,6 +7,7 @@
 
 #include <gtest/gtest.h>
 #include <string>
+#include <strstream>
 
 #include "jpeg.hpp"
 
@@ -20,7 +21,8 @@ TEST(JPEGTest, DecodeBlock) {
     std::vector<uint8_t> blockData = { 0xE5, 0x03, 0x2E, 0xEE, 0x6A};
     
     BitDecoder dec;
-    dec.setData(blockData);
+    std::istrstream is(reinterpret_cast<const char*>(blockData.data()), blockData.size());
+    dec.setData(&is);
     
     auto dcTable = HuffmanTable::build(huffmanDCTableData);
     auto acTable = HuffmanTable::build(huffmanACTableData);
