@@ -188,13 +188,8 @@ Jpeg::DataUnit Jpeg::dequantiseBlock(DataUnit du, ImageComponent ic) {
 void Jpeg::readScanData(std::istream &is) {
     std::cout << "Reading scan data from position: " << is.tellg() << std::endl;
     
-    std::vector<uint8_t> data;
-    data.resize(2048);
-    is.read(reinterpret_cast<char*>(&data[0]), data.size());
-
     BitDecoder dec;
-    std::istrstream is2(reinterpret_cast<const char*>(data.data()), data.size());
-    dec.setData(&is2);
+    dec.setData(&is);
     //read data unit 1, 2, 3, 4 of image component 1
     auto ic = _imageComponentsInScan.at(0);
     if (ic._cs != 1) throw std::runtime_error("wrong image component");
