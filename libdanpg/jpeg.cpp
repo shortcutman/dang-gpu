@@ -360,7 +360,7 @@ void Jpeg::startOfScan(std::vector<uint8_t> &data) {
         ic._ta = *reinterpret_cast<uint8_t*>(&data[byteStart + 1]) & 0x0F;
         
         ic._tdTable = &_huffmanTablesDC.at(ic._td);
-        ic._taTable = &_huffmanTablesDC.at(ic._ta);
+        ic._taTable = &_huffmanTablesAC.at(ic._ta);
         _imageComponentsInScan.push_back(ic);
     }
     size_t afterComponents = 1 + 2 * ns;
