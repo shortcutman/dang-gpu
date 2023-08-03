@@ -35,6 +35,7 @@ public:
         uint8_t _h; //horizontal sampling factor
         uint8_t _v; //vertical sampling factor
         uint8_t _tq; //quantization table destination selector
+        QuantisationTable* _tqTable;
     };
     std::vector<ImageComponent> _imageComponents;
     

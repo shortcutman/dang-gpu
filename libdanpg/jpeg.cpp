@@ -178,7 +178,7 @@ uint8_t Jpeg::deZigZag(uint8_t index) {
 Jpeg::DataUnit Jpeg::dequantiseBlock(DataUnit du, ImageComponent ic) {
     DataUnit out;
     for (uint8_t i = 0; i < du.size(); i++) {
-        out[deZigZag(i)] = (int)du[i] * _quantTables[(int)ic._tq][i];
+        out[deZigZag(i)] = (int)du[i] * (*ic._tqTable)[i];
     }
     
     return out;
@@ -321,6 +321,7 @@ void Jpeg::sofBaselineDCT(std::vector<uint8_t> &data) {
         ic._h = *reinterpret_cast<uint8_t*>(&data[byteStart + 1]) >> 4;
         ic._v = *reinterpret_cast<uint8_t*>(&data[byteStart + 1]) & 0x0F;
         ic._tq = *reinterpret_cast<uint8_t*>(&data[byteStart + 2]);
+        ic._tqTable = &_quantTables[(int)ic._tq];
         _imageComponents.push_back(ic);
         
         if (ic._h > _x) {
