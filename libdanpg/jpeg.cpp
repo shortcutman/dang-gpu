@@ -232,30 +232,7 @@ void Jpeg::readScanData(std::istream &is) {
     
     ycbcrToRGBInPlace(pixels);
     
-    std::ofstream file;
-    file.open("/tmp/jpeg.ppm");
-    
-    if (!file.is_open()) {
-        abort();
-    }
-    
-    file << "P3" << std::endl;
-    file << "16" << " " << "16" << std::endl;
-    file << "255" << std::endl;
-     
-     for (size_t y = 0; y < 16; y++) {
-         for (size_t x = 0; x < 16; x++) {
-             auto pixel = pixels[x + y * 16];
-             
-             file << std::to_string(std::get<0>(pixel)) << " "
-                  << std::to_string(std::get<1>(pixel)) << " "
-                  << std::to_string(std::get<2>(pixel)) << " ";
-         }
-         
-         file << std::endl;
-     }
-    
-    file.close();
+    writeOutPPM("/private/tmp/jpeg.ppm", 16, 16, pixels);
     
     abort();
 }

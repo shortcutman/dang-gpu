@@ -18,6 +18,8 @@ typedef std::tuple<int, int, int> Colour;
 Colour ycbcrToRGB(const Colour& ycbcr);
 void ycbcrToRGBInPlace(std::span<Colour> data);
 
+void writeOutPPM(std::string filepath, size_t width, size_t height, std::span<Colour> data);
+
 }
 
 #endif /* colour_hpp */

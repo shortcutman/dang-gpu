@@ -7,6 +7,8 @@
 
 #include "colour.hpp"
 
+#include <fstream>
+
 using namespace image;
 
 namespace {
@@ -39,4 +41,34 @@ void image::ycbcrToRGBInPlace(std::span<Colour> data) {
     for (auto& c : data) {
         c = ycbcrToRGB(c);
     }
+}
+
+void image::writeOutPPM(std::string filepath, size_t width, size_t height, std::span<Colour> data) {
+    std::ofstream file;
+    file.open(filepath);
+    
+    if (!file.is_open()) {
+        throw std::runtime_error("Cannot open file for writing.");
+    }
+    
+    if (width * height > data.size()) {
+        throw std::runtime_error("Width and height greater than provided data.");
+    }
+    
+    file << "P3" << std::endl;
+    file << width << " " << height << std::endl;
+    file << "255" << std::endl;
+     
+    for (size_t y = 0; y < 16; y++) {
+        for (size_t x = 0; x < 16; x++) {
+            auto pixel = data[x + y * 16];
+            file << std::to_string(std::get<0>(pixel)) << " "
+                 << std::to_string(std::get<1>(pixel)) << " "
+                 << std::to_string(std::get<2>(pixel)) << " ";
+        }
+         
+        file << std::endl;
+    }
+    
+    file.close();
 }
