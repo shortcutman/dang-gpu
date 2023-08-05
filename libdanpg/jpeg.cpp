@@ -182,12 +182,35 @@ Jpeg::DataUnit Jpeg::dequantiseBlock(DataUnit du, ImageComponent ic) {
 void Jpeg::readScanData(std::istream &is) {
     std::cout << "Reading scan data from position: " << is.tellg() << std::endl;
     
+    std::vector<Colour> image(_x * _y, {0, 0, 0});
+    
     BitDecoder dec;
     dec.setData(&is);
     
-    auto mcu = readMCU(dec);
+    try {
+        size_t x = 0;
+        size_t y = 0;
+        
+        while (x == 0) {
+            const size_t mcuRes = 16;
+            auto mcu = readMCU(dec);
+            
+            for (size_t line = 0; line < mcuRes; line++) {
+                size_t imageOffset = x + (y + line) * _x;
+                std::memcpy(&image[imageOffset], &mcu[line * mcuRes], mcuRes * sizeof(Colour));
+            }
+            
+            x += mcuRes;
+            if (x >= _x) {
+                x = 0;
+                y += mcuRes;
+            }
+        }
+    } catch (std::exception& e) {
+        std::cout << "readScanData, exception: " << e.what() << std::endl;
+    }
     
-    writeOutPPM("/private/tmp/jpeg.ppm", 16, 16, mcu);
+    writeOutPPM("/private/tmp/jpeg.ppm", _x, _y, image);
     
     abort();
 }
