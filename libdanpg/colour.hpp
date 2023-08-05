@@ -13,7 +13,7 @@
 
 namespace image {
 
-typedef std::tuple<int, int, int> Colour;
+typedef std::array<int, 3> Colour;
 
 Colour ycbcrToRGB(const Colour& ycbcr);
 void ycbcrToRGBInPlace(std::span<Colour> data);

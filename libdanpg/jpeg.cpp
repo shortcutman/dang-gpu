@@ -225,7 +225,7 @@ void Jpeg::readScanData(std::istream &is) {
             auto ic3y = y / 2;
             auto cr = ic30.at(0).at(ic3x + ic3y * 8);
             
-            pixels[x + y*16] = std::make_tuple(luma, cb, cr);
+            pixels[x + y*16] = {luma, cb, cr};
         }
     }
     

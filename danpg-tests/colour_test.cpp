@@ -15,9 +15,9 @@ using namespace image;
 namespace {
 
 TEST(ColourTest, YCbCrToRGB) {
-    Colour ycbcr = std::make_tuple(-49, -14, 14);
+    Colour ycbcr = {-49, -14, 14};
     auto conversion = ycbcrToRGB(ycbcr);
-    EXPECT_EQ(conversion, std::make_tuple(98, 73, 54));
+    EXPECT_EQ(conversion, Colour({98, 73, 54}));
 }
 
 }
