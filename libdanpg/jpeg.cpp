@@ -185,6 +185,14 @@ void Jpeg::readScanData(std::istream &is) {
     BitDecoder dec;
     dec.setData(&is);
     
+    auto mcu = readMCU(dec);
+    
+    writeOutPPM("/private/tmp/jpeg.ppm", 16, 16, mcu);
+    
+    abort();
+}
+
+std::vector<Colour> Jpeg::readMCU(BitDecoder& dec) {
     std::vector<std::tuple<ImageComponent, std::vector<DataUnit>>> duMap;
     size_t mcuResolution = 0;
     
@@ -228,9 +236,7 @@ void Jpeg::readScanData(std::istream &is) {
     
     ycbcrToRGBInPlace(pixels);
     
-    writeOutPPM("/private/tmp/jpeg.ppm", 16, 16, pixels);
-    
-    abort();
+    return pixels;
 }
 
 void Jpeg::appZeroData(std::vector<uint8_t> &data) {
