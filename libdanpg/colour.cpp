@@ -59,9 +59,9 @@ void image::writeOutPPM(std::string filepath, size_t width, size_t height, std::
     file << width << " " << height << std::endl;
     file << "255" << std::endl;
      
-    for (size_t y = 0; y < 16; y++) {
-        for (size_t x = 0; x < 16; x++) {
-            auto pixel = data[x + y * 16];
+    for (size_t y = 0; y < height; y++) {
+        for (size_t x = 0; x < width; x++) {
+            auto pixel = data[x + y * width];
             file << std::to_string(std::get<0>(pixel)) << " "
                  << std::to_string(std::get<1>(pixel)) << " "
                  << std::to_string(std::get<2>(pixel)) << " ";
