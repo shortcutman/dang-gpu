@@ -114,13 +114,7 @@ int extend(int v, int t) {
 
 }
 
-Jpeg::DataUnit Jpeg::readBlock(BitDecoder& dec, ImageComponentInScan ic, bool resetDC) {
-    static int prevDC = 0;
-    
-    if (resetDC) {
-        prevDC = 0;
-    }
-    
+Jpeg::DataUnit Jpeg::readBlock(BitDecoder& dec, ImageComponentInScan ic, int& prevDC) {
     DataUnit du;
     du.fill(0);
     
@@ -190,20 +184,30 @@ void Jpeg::readScanData(std::istream &is) {
     
     BitDecoder dec;
     dec.setData(&is);
-    //read data unit 1, 2, 3, 4 of image component 1
-    auto ic = _imageComponentsInScan.at(0);
-    if (ic._cs != 1) throw std::runtime_error("wrong image component");
     
-    std::vector<DataUnit> ic1;
-
-    ic1.push_back(idct(dequantiseBlock(readBlock(dec, ic, false), _imageComponents.at(0))));
-    ic1.push_back(idct(dequantiseBlock(readBlock(dec, ic, false), _imageComponents.at(0))));
-    ic1.push_back(idct(dequantiseBlock(readBlock(dec, ic, false), _imageComponents.at(0))));
-    ic1.push_back(idct(dequantiseBlock(readBlock(dec, ic, false), _imageComponents.at(0))));
+    std::vector<std::tuple<ImageComponent, std::vector<DataUnit>>> duMap;
     
-    auto ic20 = idct(dequantiseBlock(readBlock(dec, _imageComponentsInScan.at(1), true), _imageComponents.at(1)));
-    
-    auto ic30 = idct(dequantiseBlock(readBlock(dec, _imageComponentsInScan.at(2), true), _imageComponents.at(2)));
+    for (auto icS : _imageComponentsInScan) {
+        int prevDC = 0;
+        
+        auto icIt = std::find_if(_imageComponents.begin(), _imageComponents.end(), [&icS] (auto t) { return icS._cs == t._c;});
+        if (icIt == _imageComponents.end()) {
+            throw std::runtime_error("Image Component doesn't exist");
+        }
+        
+        size_t duCount = icIt->_h * icIt->_v;
+        std::vector<DataUnit> icDUs;
+        
+        for (size_t i = 0; i < duCount; i++) {
+            auto du = idct(dequantiseBlock(readBlock(dec, icS, prevDC), *icIt));
+            icDUs.push_back(du);
+        }
+        duMap.push_back(std::make_tuple(*icIt, icDUs));
+    }
+        
+    auto ic1 = std::get<1>(duMap.at(0));
+    auto ic20 = std::get<1>(duMap.at(1));
+    auto ic30 = std::get<1>(duMap.at(2));
     
     std::array<Colour, 16*16> pixels;
     for (size_t y = 0; y < 16; y++) {
@@ -215,11 +219,11 @@ void Jpeg::readScanData(std::istream &is) {
             
             auto ic2x = x / 2;
             auto ic2y = y / 2;
-            auto cb = ic20.at(ic2x + ic2y * 8);
+            auto cb = ic20.at(0).at(ic2x + ic2y * 8);
             
             auto ic3x = x / 2;
             auto ic3y = y / 2;
-            auto cr = ic30.at(ic3x + ic3y * 8);
+            auto cr = ic30.at(0).at(ic3x + ic3y * 8);
             
             pixels[x + y*16] = std::make_tuple(luma, cb, cr);
         }
