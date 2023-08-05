@@ -186,6 +186,7 @@ void Jpeg::readScanData(std::istream &is) {
     dec.setData(&is);
     
     std::vector<std::tuple<ImageComponent, std::vector<DataUnit>>> duMap;
+    size_t mcuResolution = 0;
     
     for (auto icS : _imageComponentsInScan) {
         int prevDC = 0;
@@ -196,6 +197,7 @@ void Jpeg::readScanData(std::istream &is) {
         }
         
         size_t duCount = icIt->_h * icIt->_v;
+        mcuResolution = std::max(mcuResolution, duCount / 2 * 8);
         std::vector<DataUnit> icDUs;
         
         for (size_t i = 0; i < duCount; i++) {
@@ -204,28 +206,23 @@ void Jpeg::readScanData(std::istream &is) {
         }
         duMap.push_back(std::make_tuple(*icIt, icDUs));
     }
-        
-    auto ic1 = std::get<1>(duMap.at(0));
-    auto ic20 = std::get<1>(duMap.at(1));
-    auto ic30 = std::get<1>(duMap.at(2));
     
-    std::array<Colour, 16*16> pixels;
-    for (size_t y = 0; y < 16; y++) {
-        for (size_t x = 0; x < 16; x++) {
-            auto ic1du = ic1.at(x / 8 + (y / 8)*2);
-            auto ic1x = x % 8;
-            auto ic1y = y % 8;
-            auto luma = ic1du.at(ic1x + ic1y * 8);
-            
-            auto ic2x = x / 2;
-            auto ic2y = y / 2;
-            auto cb = ic20.at(0).at(ic2x + ic2y * 8);
-            
-            auto ic3x = x / 2;
-            auto ic3y = y / 2;
-            auto cr = ic30.at(0).at(ic3x + ic3y * 8);
-            
-            pixels[x + y*16] = {luma, cb, cr};
+    const uint8_t hMax = 2;
+    const uint8_t vMax = 2;
+    
+    std::vector<Colour> pixels(mcuResolution * mcuResolution);
+    for (size_t y = 0; y < mcuResolution; y++) {
+        for (size_t x = 0; x < mcuResolution; x++) {
+            for (size_t icIdx = 0; icIdx < duMap.size(); icIdx++) {
+                auto ic  = std::get<0>(duMap.at(icIdx));
+                size_t xScale = mcuResolution / ic._h;
+                size_t yScale = mcuResolution / ic._v;
+                
+                auto icDU = std::get<1>(duMap.at(icIdx)).at(x / xScale + (y / yScale) * ic._v);
+                auto icDUx = (x / (hMax / ic._h)) % 8;
+                auto icDUy = (y / (vMax / ic._v)) % 8;
+                pixels.at(x + y * mcuResolution).at(icIdx) = icDU.at(icDUx + icDUy * 8);
+            }
         }
     }
     
