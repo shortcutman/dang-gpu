@@ -184,6 +184,9 @@ void Jpeg::readScanData(std::istream &is) {
     
     std::vector<Colour> image(_x * _y, {0, 0, 0});
     
+    _x = 32;
+    _y = 16;
+    
     BitDecoder dec;
     dec.setData(&is);
     
@@ -191,7 +194,8 @@ void Jpeg::readScanData(std::istream &is) {
         size_t x = 0;
         size_t y = 0;
         
-        while (x == 0) {
+//        while (is.peek() != std::istream::traits_type::eof()) {
+        while (x < _x && y < _y) {
             const size_t mcuRes = 16;
             auto mcu = readMCU(dec);
             
