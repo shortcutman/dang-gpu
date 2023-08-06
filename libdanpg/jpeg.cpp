@@ -114,7 +114,7 @@ int extend(int v, int t) {
 
 }
 
-Jpeg::DataUnit Jpeg::readBlock(BitDecoder& dec, ImageComponentInScan ic, int& prevDC) {
+Jpeg::DataUnit Jpeg::readBlock(BitDecoder& dec, ImageComponentInScan& ic) {
     DataUnit du;
     du.fill(0);
     
@@ -123,8 +123,8 @@ Jpeg::DataUnit Jpeg::readBlock(BitDecoder& dec, ImageComponentInScan ic, int& pr
     uint8_t t = dec.nextByte();
     if (t > 15) throw std::runtime_error("syntax error, dc ssss great than 15");
     auto diffReceive = dec.nextXBits(t);
-    prevDC += extend(diffReceive, t);
-    du[0] = prevDC;
+    ic.prevDC += extend(diffReceive, t);
+    du[0] = ic.prevDC;
     
     //read ac coefficients. f.2.2.2
     dec.setTable(ic._taTable);
@@ -223,9 +223,7 @@ std::vector<Colour> Jpeg::readMCU(BitDecoder& dec) {
     std::vector<std::tuple<ImageComponent, std::vector<DataUnit>>> duMap;
     size_t mcuResolution = 0;
     
-    for (auto icS : _imageComponentsInScan) {
-        int prevDC = 0;
-        
+    for (auto& icS : _imageComponentsInScan) {
         auto icIt = std::find_if(_imageComponents.begin(), _imageComponents.end(), [&icS] (auto t) { return icS._cs == t._c;});
         if (icIt == _imageComponents.end()) {
             throw std::runtime_error("Image Component doesn't exist");
@@ -236,7 +234,7 @@ std::vector<Colour> Jpeg::readMCU(BitDecoder& dec) {
         std::vector<DataUnit> icDUs;
         
         for (size_t i = 0; i < duCount; i++) {
-            auto du = idct(dequantiseBlock(readBlock(dec, icS, prevDC), *icIt));
+            auto du = idct(dequantiseBlock(readBlock(dec, icS), *icIt));
             icDUs.push_back(du);
         }
         duMap.push_back(std::make_tuple(*icIt, icDUs));
