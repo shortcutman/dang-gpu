@@ -183,19 +183,14 @@ void Jpeg::readScanData(std::istream &is) {
     std::cout << "Reading scan data from position: " << is.tellg() << std::endl;
     
     std::vector<Colour> image(_x * _y, {0, 0, 0});
-    
-    _x = 32;
-    _y = 16;
-    
+    size_t x = 0;
+    size_t y = 0;
+        
     BitDecoder dec;
     dec.setData(&is);
     
     try {
-        size_t x = 0;
-        size_t y = 0;
-        
-//        while (is.peek() != std::istream::traits_type::eof()) {
-        while (x < _x && y < _y) {
+        while (is.peek() != std::istream::traits_type::eof()) {
             const size_t mcuRes = 16;
             auto mcu = readMCU(dec);
             
