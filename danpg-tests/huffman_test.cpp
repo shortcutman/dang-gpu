@@ -249,7 +249,7 @@ TEST_F(HuffmanDecoderTest, DecodeMarkerSegmentException) {
     std::vector<uint8_t> encoded = {0xFF, 0xD0};
     std::istrstream is(reinterpret_cast<const char*>(encoded.data()), encoded.size());
     decoder.setData(&is);
-    EXPECT_THROW(decoder.nextHuffmanByte(), std::runtime_error);
+    EXPECT_THROW(decoder.nextHuffmanByte(), ResetMarkerException);
 }
 
 TEST_F(HuffmanDecoderTest, NotEnoughBytesErrorDueToNoBytes) {
