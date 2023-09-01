@@ -77,7 +77,7 @@ void BitDecoder::setData(std::istream* data) {
     _data = data;
 }
 
-uint8_t BitDecoder::nextByte() {
+uint8_t BitDecoder::nextHuffmanByte() {
     uint8_t numberOfBits = _table->_huffsize.front();
     uint16_t potentialCode = nextXBits(numberOfBits);
     for (size_t i = 0; i < _table->_huffcode.size(); i++) {

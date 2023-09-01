@@ -40,7 +40,7 @@ public:
     void setTable(HuffmanTable* table);
     void setData(std::istream* data);
     
-    uint8_t nextByte();
+    uint8_t nextHuffmanByte();
     uint16_t nextXBits(size_t bits);
 };
 

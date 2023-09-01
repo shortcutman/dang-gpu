@@ -120,7 +120,7 @@ Jpeg::DataUnit Jpeg::readBlock(BitDecoder& dec, ImageComponentInScan& ic) {
     
     //first read the DC component. f.2.2.1
     dec.setTable(ic._tdTable);
-    uint8_t t = dec.nextByte();
+    uint8_t t = dec.nextHuffmanByte();
     if (t > 15) throw std::runtime_error("syntax error, dc ssss great than 15");
     auto diffReceive = dec.nextXBits(t);
     ic.prevDC += extend(diffReceive, t);
@@ -131,7 +131,7 @@ Jpeg::DataUnit Jpeg::readBlock(BitDecoder& dec, ImageComponentInScan& ic) {
     size_t k = 0;
     do {
         k++;
-        uint8_t rs = dec.nextByte();
+        uint8_t rs = dec.nextHuffmanByte();
         if (rs == 0x00) {
             //EOB. All remaining coefficients are zero.
             break;

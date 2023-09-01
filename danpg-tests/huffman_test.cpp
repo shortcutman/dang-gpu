@@ -68,7 +68,7 @@ TEST_F(HuffmanDecoderTest, Decode2bit) {
     std::vector<uint8_t> encoded = {0x00};
     std::istrstream is(reinterpret_cast<const char*>(encoded.data()), encoded.size());
     decoder.setData(&is);
-    auto byte = decoder.nextByte();
+    auto byte = decoder.nextHuffmanByte();
     EXPECT_EQ(byte, 0x00);
 }
 
@@ -76,7 +76,7 @@ TEST_F(HuffmanDecoderTest, Decode3bit) {
     std::vector<uint8_t> encoded = {0x80};
     std::istrstream is(reinterpret_cast<const char*>(encoded.data()), encoded.size());
     decoder.setData(&is);
-    auto byte = decoder.nextByte();
+    auto byte = decoder.nextHuffmanByte();
     EXPECT_EQ(byte, 0x03);
 }
 
@@ -84,7 +84,7 @@ TEST_F(HuffmanDecoderTest, Decode4bit) {
     std::vector<uint8_t> encoded = {0xE0};
     std::istrstream is(reinterpret_cast<const char*>(encoded.data()), encoded.size());
     decoder.setData(&is);
-    auto byte = decoder.nextByte();
+    auto byte = decoder.nextHuffmanByte();
     EXPECT_EQ(byte, 0x06);
 }
 
@@ -92,7 +92,7 @@ TEST_F(HuffmanDecoderTest, Decode5bit) {
     std::vector<uint8_t> encoded = {0xF0};
     std::istrstream is(reinterpret_cast<const char*>(encoded.data()), encoded.size());
     decoder.setData(&is);
-    auto byte = decoder.nextByte();
+    auto byte = decoder.nextHuffmanByte();
     EXPECT_EQ(byte, 0x07);
 }
 
@@ -100,7 +100,7 @@ TEST_F(HuffmanDecoderTest, Decode6bit) {
     std::vector<uint8_t> encoded = {0xF8};
     std::istrstream is(reinterpret_cast<const char*>(encoded.data()), encoded.size());
     decoder.setData(&is);
-    auto byte = decoder.nextByte();
+    auto byte = decoder.nextHuffmanByte();
     EXPECT_EQ(byte, 0x08);
 }
 
@@ -108,7 +108,7 @@ TEST_F(HuffmanDecoderTest, Decode7bit) {
     std::vector<uint8_t> encoded = {0xFC};
     std::istrstream is(reinterpret_cast<const char*>(encoded.data()), encoded.size());
     decoder.setData(&is);
-    auto byte = decoder.nextByte();
+    auto byte = decoder.nextHuffmanByte();
     EXPECT_EQ(byte, 0x09);
 }
 
@@ -116,7 +116,7 @@ TEST_F(HuffmanDecoderTest, Decode8bit) {
     std::vector<uint8_t> encoded = {0xFE};
     std::istrstream is(reinterpret_cast<const char*>(encoded.data()), encoded.size());
     decoder.setData(&is);
-    auto byte = decoder.nextByte();
+    auto byte = decoder.nextHuffmanByte();
     EXPECT_EQ(byte, 0x0a);
 }
 
@@ -132,7 +132,7 @@ TEST_F(HuffmanDecoderTest, HuffmanDecode9bit) {
     std::vector<uint8_t> encoded = {0xFF, 0x00, 0x00};
     std::istrstream is(reinterpret_cast<const char*>(encoded.data()), encoded.size());
     decoder.setData(&is);
-    auto byte = decoder.nextByte();
+    auto byte = decoder.nextHuffmanByte();
     EXPECT_EQ(byte, 0x0b);
 }
 
@@ -153,10 +153,10 @@ TEST_F(HuffmanDecoderTest, HuffmanDecode3bitThen3bit) {
     std::vector<uint8_t> encoded = {0x94};
     std::istrstream is(reinterpret_cast<const char*>(encoded.data()), encoded.size());
     decoder.setData(&is);
-    auto byte = decoder.nextByte();
+    auto byte = decoder.nextHuffmanByte();
     EXPECT_EQ(byte, 0x03);
     
-    byte = decoder.nextByte();
+    byte = decoder.nextHuffmanByte();
     EXPECT_EQ(byte, 0x04);
 }
 
@@ -190,10 +190,10 @@ TEST_F(HuffmanDecoderTest, Decode3bitThen9bit) {
     std::vector<uint8_t> encoded = {0x9F, 0xE0};
     std::istrstream is(reinterpret_cast<const char*>(encoded.data()), encoded.size());
     decoder.setData(&is);
-    auto byte = decoder.nextByte();
+    auto byte = decoder.nextHuffmanByte();
     EXPECT_EQ(byte, 0x03);
     
-    byte = decoder.nextByte();
+    byte = decoder.nextHuffmanByte();
     EXPECT_EQ(byte, 0x0b);
 }
 
@@ -214,10 +214,10 @@ TEST_F(HuffmanDecoderTest, HuffmanDecode9bitThen3bit) {
     std::vector<uint8_t> encoded = {0xFF, 0x00, 0x40};
     std::istrstream is(reinterpret_cast<const char*>(encoded.data()), encoded.size());
     decoder.setData(&is);
-    auto byte = decoder.nextByte();
+    auto byte = decoder.nextHuffmanByte();
     EXPECT_EQ(byte, 0x0b);
     
-    byte = decoder.nextByte();
+    byte = decoder.nextHuffmanByte();
     EXPECT_EQ(byte, 0x03);
 }
 
@@ -226,10 +226,10 @@ TEST_F(HuffmanDecoderTest, Decode9bitThen9bit) {
     std::vector<uint8_t> encoded = {0xFF, 0x00, 0x7F, 0x80};
     std::istrstream is(reinterpret_cast<const char*>(encoded.data()), encoded.size());
     decoder.setData(&is);
-    auto byte = decoder.nextByte();
+    auto byte = decoder.nextHuffmanByte();
     EXPECT_EQ(byte, 0x0b);
     
-    byte = decoder.nextByte();
+    byte = decoder.nextHuffmanByte();
     EXPECT_EQ(byte, 0x0b);
 }
 
@@ -238,10 +238,10 @@ TEST_F(HuffmanDecoderTest, Decode6bitThen9bit) {
     std::vector<uint8_t> encoded = {0xFB, 0xFC, 0x00};
     std::istrstream is(reinterpret_cast<const char*>(encoded.data()), encoded.size());
     decoder.setData(&is);
-    auto byte = decoder.nextByte();
+    auto byte = decoder.nextHuffmanByte();
     EXPECT_EQ(byte, 0x08);
     
-    byte = decoder.nextByte();
+    byte = decoder.nextHuffmanByte();
     EXPECT_EQ(byte, 0x0b);
 }
 
@@ -249,7 +249,7 @@ TEST_F(HuffmanDecoderTest, DecodeMarkerSegmentException) {
     std::vector<uint8_t> encoded = {0xFF, 0xD0};
     std::istrstream is(reinterpret_cast<const char*>(encoded.data()), encoded.size());
     decoder.setData(&is);
-    EXPECT_THROW(decoder.nextByte(), std::runtime_error);
+    EXPECT_THROW(decoder.nextHuffmanByte(), std::runtime_error);
 }
 
 TEST_F(HuffmanDecoderTest, NotEnoughBytesErrorDueToNoBytes) {
@@ -273,13 +273,13 @@ TEST_F(HuffmanDecoderTest, Decode3bitSkip3Then3bit) {
     std::vector<uint8_t> encoded = {0x9E, 0x80};
     std::istrstream is(reinterpret_cast<const char*>(encoded.data()), encoded.size());
     decoder.setData(&is);
-    auto byte = decoder.nextByte();
+    auto byte = decoder.nextHuffmanByte();
     EXPECT_EQ(byte, 0x03);
     
     byte = decoder.nextXBits(3);
     EXPECT_EQ(byte, 0x07);
     
-    byte = decoder.nextByte();
+    byte = decoder.nextHuffmanByte();
     EXPECT_EQ(byte, 0x04);
 }
 
