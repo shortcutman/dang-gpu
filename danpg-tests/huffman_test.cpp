@@ -273,14 +273,14 @@ TEST_F(HuffmanDecoderTest, Decode3bitSkip3Then3bit) {
     std::vector<uint8_t> encoded = {0x9E, 0x80};
     std::istrstream is(reinterpret_cast<const char*>(encoded.data()), encoded.size());
     decoder.setData(&is);
-    auto byte = decoder.nextHuffmanByte();
-    EXPECT_EQ(byte, 0x03);
+    auto huffmanByte = decoder.nextHuffmanByte();
+    EXPECT_EQ(huffmanByte, 0x03);
     
-    byte = decoder.nextXBits(3);
+    auto byte = decoder.nextXBits(3);
     EXPECT_EQ(byte, 0x07);
     
-    byte = decoder.nextHuffmanByte();
-    EXPECT_EQ(byte, 0x04);
+    huffmanByte = decoder.nextHuffmanByte();
+    EXPECT_EQ(huffmanByte, 0x04);
 }
 
 }
