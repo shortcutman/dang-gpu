@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <map>
+#include <sstream>
 
 HuffmanTable HuffmanTable::build(std::span<uint8_t> data) {
     size_t codeCount = 0;
@@ -109,22 +110,20 @@ uint16_t BitDecoder::nextXBits(size_t bits) {
         auto nextByte = _data->get();
         if (nextByte == std::istream::traits_type::eof()) {
             throw std::runtime_error("Not enough bytes for request");
-        } else if (prevByteIsMarker && nextByte == 0x00) {
-            prevByteIsMarker = false;
-            continue;
-        } else if (prevByteIsMarker) {
-            throw std::runtime_error("encountered marker segment");
+        } else if (nextByte == 0xFF) {
+            auto peekByte = _data->peek();
+            if (peekByte != 0x00) {
+                std::stringstream ss;
+                ss << "Marker: " << std::hex << 0xFF << peekByte;
+                throw std::runtime_error(ss.str());
+            } else {
+                _data->get();
+            }
         }
         
         _currentBytes <<= 8;
         _currentBytes |= nextByte;
         _bitsBuffered += 8;
-        
-        if (nextByte == 0xFF) {
-            prevByteIsMarker = true;
-        } else {
-            prevByteIsMarker = false;
-        }
     }
     
     uint16_t requestedBits = _currentBytes >> (_bitsBuffered - bits);
