@@ -29,9 +29,12 @@ public:
 class BitDecoder {
 private:
     HuffmanTable* _table = nullptr;
-    uint8_t _bits = 0;
     std::istream* _data = nullptr;
+    
+    uint32_t _bitsIntoByte = 0;
+    uint32_t _bitsBuffered = 0;
     uint32_t _currentBytes = 0;
+    bool prevByteIsMarker = false;
     
 public:
     void setTable(HuffmanTable* table);
@@ -39,10 +42,6 @@ public:
     
     uint8_t nextByte();
     uint16_t nextXBits(size_t bits);
-
-private:
-    uint16_t getNext16bits();
-    void advanceBits(uint8_t bits);
 };
 
 #endif /* huffmantable_hpp */

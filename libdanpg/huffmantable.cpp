@@ -75,25 +75,23 @@ void BitDecoder::setTable(HuffmanTable *table) {
 
 void BitDecoder::setData(std::istream* data) {
     _data = data;
-    advanceBits(16);
-    advanceBits(16);
 }
 
 uint8_t BitDecoder::nextByte() {
-    uint16_t potentialCode = getNext16bits();
     uint8_t numberOfBits = _table->_huffsize.front();
-    uint16_t mask = 0xFFFF << (16 - numberOfBits);
-        
+    uint16_t potentialCode = nextXBits(numberOfBits);
     for (size_t i = 0; i < _table->_huffcode.size(); i++) {
         if (_table->_huffsize[i] > numberOfBits) {
-            mask = 0xFFFF << (16 - _table->_huffsize[i]);
+            uint8_t numberOfNewBits = _table->_huffsize[i] - numberOfBits;
             numberOfBits = _table->_huffsize[i];
+            
+            potentialCode <<= numberOfNewBits;
+            potentialCode |= nextXBits(numberOfNewBits);
         }
         
-        uint16_t codeEntry = (_table->_huffcode[i] << (16 - numberOfBits));
+        uint16_t codeEntry = _table->_huffcode[i];
         
-        if (codeEntry == (potentialCode & mask)) {
-            advanceBits(numberOfBits);
+        if (codeEntry == potentialCode) {
             return _table->_huffval[i];
         }
     }
@@ -103,41 +101,35 @@ uint8_t BitDecoder::nextByte() {
 }
 
 uint16_t BitDecoder::nextXBits(size_t bits) {
-    uint16_t value = getNext16bits();
-    uint16_t mask = 0xFFFF << (16 - bits);
-    advanceBits(bits);
-    return (value & mask) >> (16 - bits);
-}
-
-uint16_t BitDecoder::getNext16bits() {
-    uint16_t next16 = (_currentBytes << _bits) >> 16;
-    
-    if (next16 == 0xFF00) {
-        uint8_t msb = next16 >> 8;
-        advanceBits(8);
-        _currentBytes |= (uint32_t)msb << 24;
-    } else if ((next16 & 0xFF00) == 0xFF00) {
-        throw std::runtime_error("Encountered marker segement");
-    }
-
-    return next16;
-}
-
-void BitDecoder::advanceBits(uint8_t bits) {
     if (bits > 16) {
         throw std::logic_error("Advancing by more than 16 bits not supported");
     }
     
-    _bits += bits;
-    
-    while (_bits >= 8) {
-        if (_data->peek() == std::istream::traits_type::eof()) {
-            return;
+    while (_bitsBuffered < bits) {
+        auto nextByte = _data->get();
+        if (nextByte == std::istream::traits_type::eof()) {
+            throw std::runtime_error("Not enough bytes for request");
+        } else if (prevByteIsMarker && nextByte == 0x00) {
+            prevByteIsMarker = false;
+            continue;
+        } else if (prevByteIsMarker) {
+            throw std::runtime_error("encountered marker segment");
         }
         
-        uint8_t nextByte = _data->get();
         _currentBytes <<= 8;
         _currentBytes |= nextByte;
-        _bits -= 8;
+        _bitsBuffered += 8;
+        
+        if (nextByte == 0xFF) {
+            prevByteIsMarker = true;
+        } else {
+            prevByteIsMarker = false;
+        }
     }
+    
+    uint16_t requestedBits = _currentBytes >> (_bitsBuffered - bits);
+    _currentBytes = static_cast<uint32_t>(static_cast<uint64_t>(_currentBytes) << (32 - _bitsBuffered + bits));
+    _currentBytes = _currentBytes >> (32 - (_bitsBuffered - bits));
+    _bitsBuffered -= bits;
+    return requestedBits;
 }
