@@ -112,12 +112,19 @@ uint16_t BitDecoder::nextXBits(size_t bits) {
             throw std::runtime_error("Not enough bytes for request");
         } else if (nextByte == 0xFF) {
             auto peekByte = _data->peek();
-            if (peekByte != 0x00) {
+            if (peekByte == 0x00) {
+                _data->get(); //byte stuffing, F.1.2.3. throw this away.
+            } else if (peekByte >= 0xD0 && peekByte <= 0xD7) {
+                //restart marker, consume marker, reset own state, and signal caller to reset
+                _data->get();
+                _bitsIntoByte = 0;
+                _bitsBuffered = 0;
+                _currentBytes = 0;
+                throw ResetMarkerException();
+            } else {
                 std::stringstream ss;
                 ss << "Marker: " << std::hex << 0xFF << peekByte;
                 throw std::runtime_error(ss.str());
-            } else {
-                _data->get();
             }
         }
         

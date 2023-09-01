@@ -26,6 +26,10 @@ public:
     static HuffmanTable build(std::span<uint8_t> data);
 };
 
+class ResetMarkerException : public std::exception {
+    
+};
+
 class BitDecoder {
 private:
     HuffmanTable* _table = nullptr;
