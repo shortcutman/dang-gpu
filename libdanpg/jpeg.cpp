@@ -192,17 +192,24 @@ void Jpeg::readScanData(std::istream &is) {
     try {
         while (is.peek() != std::istream::traits_type::eof()) {
             const size_t mcuRes = 16;
-            auto mcu = readMCU(dec);
             
-            for (size_t line = 0; line < mcuRes; line++) {
-                size_t imageOffset = x + (y + line) * _x;
-                std::memcpy(&image[imageOffset], &mcu[line * mcuRes], mcuRes * sizeof(Colour));
-            }
-            
-            x += mcuRes;
-            if (x >= _x) {
-                x = 0;
-                y += mcuRes;
+            try {
+                auto mcu = readMCU(dec);
+                
+                for (size_t line = 0; line < mcuRes; line++) {
+                    size_t imageOffset = x + (y + line) * _x;
+                    std::memcpy(&image[imageOffset], &mcu[line * mcuRes], mcuRes * sizeof(Colour));
+                }
+                
+                x += mcuRes;
+                if (x >= _x) {
+                    x = 0;
+                    y += mcuRes;
+                }
+            } catch (ResetMarkerException& ex) {
+                for (auto& icS : _imageComponentsInScan) {
+                    icS.prevDC = 0;
+                }
             }
         }
     } catch (std::exception& e) {
