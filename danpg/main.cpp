@@ -9,6 +9,7 @@
 #include <fstream>
 
 #include "jpeg.hpp"
+#include "colour.hpp"
 
 int main(int argc, const char * argv[]) {
     
@@ -20,6 +21,8 @@ int main(int argc, const char * argv[]) {
         std::cout << "opened" << std::endl;
         
         image::Jpeg jpeg(f);
+        
+        image::writeOutPPM("/private/tmp/jpeg.ppm", jpeg._x, jpeg._y, jpeg._image);
     }
     
     return 0;

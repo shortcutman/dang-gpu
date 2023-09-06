@@ -57,6 +57,8 @@ public:
     size_t _numberOfMCU = 0;
     bool _inScan = false;
     
+    std::vector<Colour> _image;
+    
 public:
     Jpeg(std::istream& is);
     Jpeg();
