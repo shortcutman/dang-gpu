@@ -14,9 +14,10 @@ namespace image {
 
 typedef std::array<int, 8*8> DataUnit;
 
-DataUnit idct_original(const DataUnit& du);
+DataUnit idct_float(const DataUnit& du);
+DataUnit idct_int(const DataUnit& du);
 
-#define idct idct_original
+#define idct idct_float
 
 }
 

@@ -12,7 +12,7 @@
 
 namespace {
 
-TEST(IDCTTest, InputAndOutputOfLumaFromTestImage) {
+TEST(IDCTTest, InputAndOutputOfLumaFromTestImageFloat) {
     image::DataUnit input = {
         -430, -10, 20, 0, 0, 0, 0, 0,
         20, 0, 0, 0, 0, 0, 0, 0,
@@ -34,7 +34,34 @@ TEST(IDCTTest, InputAndOutputOfLumaFromTestImage) {
         -56, -58, -61, -63, -63, -62, -59, -57
     };
     
-    auto result = image::idct(input);
+    auto result = image::idct_float(input);
+    EXPECT_EQ(result, output);
+}
+
+TEST(IDCTTest, InputAndOutputOfLumaFromTestImageInteger) {
+    image::DataUnit input = {
+        -430, -10, 20, 0, 0, 0, 0, 0,
+        20, 0, 0, 0, 0, 0, 0, 0,
+        -20, 10, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0
+    };
+    image::DataUnit output = {
+        -48, -51, -53, -56, -56, -54, -52, -50,
+        -48, -50, -53, -55, -54, -52, -49, -47,
+        -48, -50, -52, -53, -52, -49, -46, -43,
+        -49, -50, -52, -53, -51, -48, -44, -41,
+        -50, -52, -53, -54, -52, -49, -45, -42,
+        -52, -54, -56, -57, -56, -53, -49, -47,
+        -54, -56, -58, -60, -60, -58, -55, -53,
+        -55, -57, -60, -63, -63, -61, -58, -57
+    };
+    
+    auto result = image::idct_int(input);
+    
     EXPECT_EQ(result, output);
 }
 
