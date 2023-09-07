@@ -12,12 +12,12 @@
 
 namespace {
 
-std::array<double, 64> cosTable() {
-    std::array<double, 64> table;
+std::array<float, 64> cosTable() {
+    std::array<float, 64> table;
     
     for (int x = 0; x < 8; x++) {
         for (int y = 0; y < 8; y++) {
-            table[x + y * 8] = std::cos((2.f * x + 1.f) * y * std::numbers::pi / 16.f);
+            table[x + y * 8] = std::cosf((2.f * x + 1.f) * y * std::numbers::pi / 16.f);
         }
     }
     
@@ -77,7 +77,7 @@ image::DataUnit image::idct_float_table(const DataUnit& du) {
     return out;
 }
 
-image::DataUnit image::idct_int(const DataUnit& du) {    
+image::DataUnit image::idct_int(const DataUnit& du) {
     DataUnit out;
     
     for (size_t y = 0; y < 8; y++) {
