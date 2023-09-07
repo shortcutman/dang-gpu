@@ -10,7 +10,7 @@
 #include <cmath>
 #include <numbers>
 
-image::DataUnit image::idct(const DataUnit& du) {
+image::DataUnit image::idct_original(const DataUnit& du) {
     DataUnit out;
     
     for (size_t y = 0; y < 8; y++) {
