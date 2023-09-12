@@ -16,10 +16,15 @@ typedef std::array<int, 8*8> DataUnit;
 
 DataUnit idct_float(const DataUnit& du);
 DataUnit idct_float_table(const DataUnit& du);
+DataUnit dct_float_loeffler(const DataUnit& du);
+DataUnit idct_float_loeffler(const DataUnit& du);
 DataUnit idct_int(const DataUnit& du);
 DataUnit idct_int_table(const DataUnit& du);
 
-#define idct idct_float_table
+#define idct idct_float_loeffler
+
+std::array<int, 8> loeffler_1d_dct(const std::array<int, 8> in);
+std::array<float, 8> loeffler_1d_idct(const std::array<float, 8> in);
 
 }
 

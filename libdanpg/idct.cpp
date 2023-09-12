@@ -77,6 +77,208 @@ image::DataUnit image::idct_float_table(const DataUnit& du) {
     return out;
 }
 
+std::array<int, 8> image::loeffler_1d_dct(const std::array<int, 8> in) {
+    ///
+    //stage 1
+    ///
+    std::array<float, 8> stage1;
+    stage1[0] = in[0] + in[7];
+    stage1[1] = in[1] + in[6];
+    stage1[2] = in[2] + in[5];
+    stage1[3] = in[3] + in[4];
+    stage1[4] = in[3] - in[4];
+    stage1[5] = in[2] - in[5];
+    stage1[6] = in[1] - in[6];
+    stage1[7] = in[0] - in[7];
+    
+    ///
+    //stage 2
+    ///
+    std::array<float, 8> stage2;
+    stage2[0] = stage1[0] + stage1[3];
+    stage2[1] = stage1[1] + stage1[2];
+    stage2[2] = stage1[1] - stage1[2];
+    stage2[3] = stage1[0] - stage1[3];
+    //stage 2, c3
+    stage2[4] = stage1[4] * std::cosf(3.f * std::numbers::pi / 16.f)
+                + stage1[7] * std::sinf(3.f * std::numbers::pi / 16.f );
+    stage2[7] = - stage1[4] * std::sinf(3.f * std::numbers::pi / 16.f)
+                + stage1[7] * std::cosf(3.f * std::numbers::pi / 16.f );
+    //stage 2, c1
+    stage2[5] = stage1[5] * std::cosf(3.f * std::numbers::pi / 16.f)
+                + stage1[6] * std::sinf(3.f * std::numbers::pi / 16.f );
+    stage2[6] = - stage1[5] * std::sinf(3.f * std::numbers::pi / 16.f)
+                + stage1[6] * std::cosf(3.f * std::numbers::pi / 16.f );
+    
+    ///
+    //stage3
+    ///
+    std::array<float, 8> stage3;
+    stage3[0] = stage2[0] + stage2[1];
+    stage3[1] = stage2[0] - stage2[1];
+    stage3[2] = stage2[2] * std::sqrtf(2.f) * std::cosf(std::numbers::pi / 16.f)
+                + stage2[3] * std::sqrtf(2.f) * std::sinf(std::numbers::pi / 16.f );
+    stage3[3] = - stage2[2] * std::sqrtf(2.f) * std::sinf(std::numbers::pi / 16.f)
+                + stage2[3] * std::sqrtf(2.f) * std::cosf(std::numbers::pi / 16.f );
+    stage3[4] = stage2[4] + stage2[6];
+    stage3[5] = stage2[7] - stage2[5];
+    stage3[6] = stage2[4] - stage2[6];
+    stage3[7] = stage2[7] + stage2[5];
+    
+    ///
+    //stage4
+    ///
+    std::array<int, 8> stage4;
+    stage4[0] = stage3[0];
+    stage4[1] = stage3[7] + stage3[4];
+    stage4[2] = stage3[2];
+    stage4[3] = stage3[5] * std::sqrtf(2.f);
+    stage4[4] = stage3[1];
+    stage4[5] = stage3[6] * std::sqrtf(2.f);
+    stage4[6] = stage3[3];
+    stage4[7] = stage3[7] - stage3[4];
+    
+    return stage4;
+}
+
+std::array<float, 8> image::loeffler_1d_idct(const std::array<float, 8> in) {
+    ///
+    //stage4
+    ///
+    std::array<float, 8> stage4;
+    stage4[0] = in[0];
+    stage4[1] = in[4];
+    stage4[2] = in[2];
+    stage4[3] = in[6];
+    stage4[4] = in[1] - in[7];
+    stage4[5] = in[3] * std::sqrtf(2.f);
+    stage4[6] = in[5] * std::sqrtf(2.f);
+    stage4[7] = in[1] + in[7];
+    
+    ///
+    //stage3
+    ///
+    std::array<float, 8> stage3;
+    stage3[0] = stage4[0] + stage4[1];
+    stage3[1] = stage4[0] - stage4[1];
+    stage3[2] = stage4[2] * std::sqrtf(2.f) * std::cosf(6.f * std::numbers::pi / 16.f)
+                - stage4[3] * std::sqrtf(2.f) * std::sinf(6.f * std::numbers::pi / 16.f );
+    stage3[3] = stage4[2] * std::sqrtf(2.f) * std::sinf(6.f * std::numbers::pi / 16.f)
+                + stage4[3] * std::sqrtf(2.f) * std::cosf(6.f * std::numbers::pi / 16.f );
+    stage3[4] = stage4[4] + stage4[6];
+    stage3[5] = stage4[7] - stage4[5];
+    stage3[6] = stage4[4] - stage4[6];
+    stage3[7] = stage4[7] + stage4[5];
+    
+    ///
+    //stage 2
+    ///
+    std::array<float, 8> stage2;
+    stage2[0] = stage3[0] + stage3[3];
+    stage2[1] = stage3[1] + stage3[2];
+    stage2[2] = stage3[1] - stage3[2];
+    stage2[3] = stage3[0] - stage3[3];
+    //stage 2, c3
+    stage2[4] = stage3[4] * std::cosf(3.f * std::numbers::pi / 16.f)
+                - stage3[7] * std::sinf(3.f * std::numbers::pi / 16.f );
+    stage2[7] =  stage3[4] * std::sinf(3.f * std::numbers::pi / 16.f)
+                + stage3[7] * std::cosf(3.f * std::numbers::pi / 16.f );
+    //stage 2, c1
+    stage2[5] = stage3[5] * std::cosf(1.f * std::numbers::pi / 16.f)
+                - stage3[6] * std::sinf(1.f * std::numbers::pi / 16.f );
+    stage2[6] =  stage3[5] * std::sinf(1.f * std::numbers::pi / 16.f)
+                + stage3[6] * std::cosf(1.f * std::numbers::pi / 16.f );
+    
+    ///
+    //stage 1
+    ///
+    std::array<float, 8> stage1;
+    stage1[0] = stage2[0] + stage2[7];
+    stage1[1] = stage2[1] + stage2[6];
+    stage1[2] = stage2[2] + stage2[5];
+    stage1[3] = stage2[3] + stage2[4];
+    stage1[4] = stage2[3] - stage2[4];
+    stage1[5] = stage2[2] - stage2[5];
+    stage1[6] = stage2[1] - stage2[6];
+    stage1[7] = stage2[0] - stage2[7];
+    
+    return stage1;
+}
+
+namespace {
+
+template<class InputIt, class OutputIt>
+void copy_n_stride(const InputIt first, size_t stride, size_t count, OutputIt result) {
+    auto sourceIt = first;
+    auto resultIt = result;
+    
+    for (size_t i = 0; i < count; i++) {
+        sourceIt = first + i * stride;
+        
+        *resultIt = *sourceIt;
+        resultIt++;
+    }
+}
+
+}
+
+image::DataUnit image::dct_float_loeffler(const DataUnit& du) {
+    DataUnit out;
+    
+    //rows
+    for (size_t y = 0; y < 8; y++) {
+        std::array<int, 8> input;
+        std::copy_n(du.begin() + y*8, 8, input.begin());
+        auto output = loeffler_1d_dct(input);
+        std::copy(output.begin(), output.end(), out.begin() + y*8);
+    }
+    
+    //columns
+    for (size_t x = 0; x < 8; x++) {
+        std::array<int, 8> input;
+        for (size_t y = 0; y < 8; y++) {
+            input[y] = du[x + y*8];
+        }
+        
+        auto column = loeffler_1d_dct(input);
+        
+        for (size_t y = 0; y < 8; y++) {
+            out[x + y*8] = column[y];
+        }
+    }
+        
+    return out;
+}
+
+image::DataUnit image::idct_float_loeffler(const DataUnit& du) {
+    std::array<float, 64> outFloat;
+    DataUnit out;
+    
+    //rows
+    for (size_t y = 0; y < 8; y++) {
+        std::array<float, 8> input;
+        std::copy_n(du.begin() + y*8, 8, input.begin());
+        auto output = loeffler_1d_idct(input);
+        std::copy(output.begin(), output.end(), outFloat.begin() + y*8);
+    }
+    
+    //columns
+    for (size_t x = 0; x < 8; x++) {
+        std::array<float, 8> input;
+        for (size_t y = 0; y < 8; y++) {
+            input[y] = outFloat[x + y*8];
+        }
+        
+        auto column = loeffler_1d_idct(input);
+        
+        for (size_t y = 0; y < 8; y++) {
+            out[x + y*8] = column[y] / 8.f;
+        }
+    }
+    
+    return out;
+}
+
 image::DataUnit image::idct_int(const DataUnit& du) {
     DataUnit out;
     
