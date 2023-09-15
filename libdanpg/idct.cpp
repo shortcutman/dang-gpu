@@ -205,23 +205,6 @@ std::array<float, 8> image::loeffler_1d_idct(const std::array<float, 8> in) {
     return stage1;
 }
 
-namespace {
-
-template<class InputIt, class OutputIt>
-void copy_n_stride(const InputIt first, size_t stride, size_t count, OutputIt result) {
-    auto sourceIt = first;
-    auto resultIt = result;
-    
-    for (size_t i = 0; i < count; i++) {
-        sourceIt = first + i * stride;
-        
-        *resultIt = *sourceIt;
-        resultIt++;
-    }
-}
-
-}
-
 image::DataUnit image::dct_float_loeffler(const DataUnit& du) {
     DataUnit out;
     
