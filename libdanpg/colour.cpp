@@ -28,12 +28,9 @@ int adjustAndClamp(float val) {
 }
 
 Colour image::ycbcrToRGB(const Colour& ycbcr) {
-    float y = std::get<0>(ycbcr);
-    float cb = std::get<1>(ycbcr);
-    float cr = std::get<2>(ycbcr);
-    auto r = adjustAndClamp(y + (1.402f * cr));
-    auto g = adjustAndClamp(y - (0.34414f * cb) - (0.71414f * cr));
-    auto b = adjustAndClamp(y + (1.772f * cb));
+    auto r = adjustAndClamp(ycbcr.y + (1.402f * ycbcr.cr));
+    auto g = adjustAndClamp(ycbcr.y - (0.34414f * ycbcr.cb) - (0.71414f * ycbcr.cr));
+    auto b = adjustAndClamp(ycbcr.y + (1.772f * ycbcr.cb));
     return {r, g, b};
 }
 
@@ -62,9 +59,9 @@ void image::writeOutPPM(std::string filepath, size_t width, size_t height, std::
     for (size_t y = 0; y < height; y++) {
         for (size_t x = 0; x < width; x++) {
             auto pixel = data[x + y * width];
-            file << std::to_string(std::get<0>(pixel)) << " "
-                 << std::to_string(std::get<1>(pixel)) << " "
-                 << std::to_string(std::get<2>(pixel)) << " ";
+            file << std::to_string(pixel.r) << " "
+                 << std::to_string(pixel.g) << " "
+                 << std::to_string(pixel.b) << " ";
         }
          
         file << std::endl;

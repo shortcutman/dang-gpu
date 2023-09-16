@@ -13,7 +13,24 @@
 
 namespace image {
 
-typedef std::array<int, 3> Colour;
+//typedef std::array<int, 3> Colour;
+
+struct Colour {
+    union {
+        int r;
+        int y;
+    };
+    
+    union {
+        int g;
+        int cr;
+    };
+    
+    union {
+        int b;
+        int cb;
+    };
+};
 
 Colour ycbcrToRGB(const Colour& ycbcr);
 void ycbcrToRGBInPlace(std::span<Colour> data);

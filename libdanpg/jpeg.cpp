@@ -233,7 +233,22 @@ std::vector<Colour> Jpeg::pixelsFromImageComponents(std::vector<std::tuple<Image
                 auto icDU = std::get<1>(pair).at(x / xScale + (y / yScale) * ic._v);
                 auto icDUx = (x / (hMax / ic._h)) % 8;
                 auto icDUy = (y / (vMax / ic._v)) % 8;
-                pixels.at(x + y * mcuResolution).at(icIdx) = icDU.at(icDUx + icDUy * 8);
+                
+                switch (icIdx) {
+                    case 0:
+                        pixels.at(x + y * mcuResolution).y = icDU.at(icDUx + icDUy * 8);
+                        break;
+                    case 1:
+                        pixels.at(x + y * mcuResolution).cb = icDU.at(icDUx + icDUy * 8);
+                        break;
+                    case 2:
+                        pixels.at(x + y * mcuResolution).cr = icDU.at(icDUx + icDUy * 8);
+                        break;
+                    default:
+                        throw std::logic_error("too many image components for JFIF");
+                        break;
+                }
+                
             }
         }
     }
