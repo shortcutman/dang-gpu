@@ -11,6 +11,24 @@
 
 using namespace image;
 
+void image::Colour::setIndexColour(size_t index, int value) {
+    switch (index) {
+        case 0:
+            y = value;
+            break;
+        case 1:
+            cb = value;
+            break;
+        case 2:
+            cr = value;
+            break;
+        default:
+            throw std::logic_error("index out of bounds for colour");
+            break;
+    }
+}
+
+
 namespace {
 
 int adjustAndClamp(float val) {

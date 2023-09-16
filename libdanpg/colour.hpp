@@ -30,6 +30,8 @@ struct Colour {
         int b;
         int cb;
     };
+    
+    void setIndexColour(size_t index, int value);
 };
 
 Colour ycbcrToRGB(const Colour& ycbcr);
