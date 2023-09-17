@@ -23,13 +23,19 @@ struct Colour {
     
     union {
         int g;
-        int cr;
+        int cb;
     };
     
     union {
         int b;
-        int cb;
+        int cr;
     };
+    
+    bool operator==(const Colour& b) const {
+        return this->r == b.r &&
+               this->g == b.g &&
+               this->b == b.b;
+    }
     
     inline void setIndexColour(size_t index, int value) {
         switch (index) {
