@@ -246,6 +246,24 @@ void copyDUIntoPixels(size_t mcuResolution, std::vector<Colour>& pixels, DataUni
     }
 }
 
+void copy4DUIntoPixels(size_t mcuResolution, std::vector<Colour>& pixels, DataUnit& du, size_t subpixelIndex, image::Jpeg::ImageComponent& ic, size_t duIndex) {
+    const std::array<size_t, 4> pixelStart = {0, 8, 128, 136};    
+    size_t pixel = pixelStart[duIndex];
+    
+    size_t yDU = 0;
+    while (yDU < 8) {
+        size_t xDU = 0;
+        while (xDU < 8) {
+            pixels.at(pixel).setIndexColour(subpixelIndex, du.at(yDU * 8 + xDU));
+            pixel++;
+            xDU++;
+        }
+        
+        pixel += 8;
+        yDU++;
+    }
+}
+
 }
 
 std::vector<Colour> Jpeg::readMCU(BitDecoder& dec) {
@@ -261,25 +279,14 @@ std::vector<Colour> Jpeg::readMCU(BitDecoder& dec) {
         }
                 
         size_t duCount = icIt->_h * icIt->_v;
-        size_t xScale = mcuResolution / icIt->_h;
-        size_t yScale = mcuResolution / icIt->_v;
-        std::vector<DataUnit> dus;
-        
-        for (size_t i = 0; i < duCount; i++) {
-            auto du = idct(dequantiseBlock(readBlock(dec, icS), *icIt));
-            dus.push_back(du);
-        }
         
         if (duCount == 1) {
-            copyDUIntoPixels(mcuResolution, pixels, dus.front(), icIdx, *icIt);
+            auto du = idct(dequantiseBlock(readBlock(dec, icS), *icIt));
+            copyDUIntoPixels(mcuResolution, pixels, du, icIdx, *icIt);
         } else {
-            for (size_t y = 0; y < mcuResolution; y++) {
-                auto icDUy = (y / (vMax / icIt->_v)) % 8;
-                for (size_t x = 0; x < mcuResolution; x++) {
-                    auto icDU = dus.at(x / xScale + (y / yScale) * icIt->_v);
-                    auto icDUx = (x / (hMax / icIt->_h)) % 8;
-                    pixels.at(x + y * mcuResolution).setIndexColour(icIdx, icDU.at(icDUx + icDUy * 8));
-                }
+            for (size_t i = 0; i < duCount; i++) {
+                auto du = idct(dequantiseBlock(readBlock(dec, icS), *icIt));
+                copy4DUIntoPixels(mcuResolution, pixels, du, icIdx, *icIt, i);
             }
         }
     }
