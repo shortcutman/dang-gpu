@@ -219,7 +219,7 @@ void Jpeg::readScanData(std::istream &is) {
 
 namespace {
 
-void copyDUIntoPixels(size_t mcuResolution, std::vector<Colour>& pixels, DataUnit& du, size_t index) {
+void copyDUIntoPixels(size_t mcuResolution, std::vector<Colour>& pixels, DataUnit& du, size_t index, image::Jpeg::ImageComponent& ic) {
     size_t pixel = 0;
     
     size_t yDU = 0;
@@ -232,14 +232,14 @@ void copyDUIntoPixels(size_t mcuResolution, std::vector<Colour>& pixels, DataUni
             
             pixel++;
             xInc++;
-            if (xInc >= 2) { // > icIt->_v) for vertical sampling ratio
+            if (xInc >= ic._hPixelsPerSample) {
                 xDU++;
                 xInc = 0;
             }
         }
         
         yInc++;
-        if (yInc >= 2) { // > icIt->_v) for vertical sampling ratio
+        if (yInc >= ic._vPixelsPerSample) {
             yDU++;
             yInc = 0;
         }
@@ -250,8 +250,6 @@ void copyDUIntoPixels(size_t mcuResolution, std::vector<Colour>& pixels, DataUni
 
 std::vector<Colour> Jpeg::readMCU(BitDecoder& dec) {
     const size_t mcuResolution = 16;
-    const uint8_t hMax = 2;
-    const uint8_t vMax = 2;
     
     std::vector<Colour> pixels(mcuResolution * mcuResolution);
     
@@ -273,7 +271,7 @@ std::vector<Colour> Jpeg::readMCU(BitDecoder& dec) {
         }
         
         if (duCount == 1) {
-            copyDUIntoPixels(mcuResolution, pixels, dus.front(), icIdx);
+            copyDUIntoPixels(mcuResolution, pixels, dus.front(), icIdx, *icIt);
         } else {
             for (size_t y = 0; y < mcuResolution; y++) {
                 auto icDUy = (y / (vMax / icIt->_v)) % 8;
@@ -357,6 +355,9 @@ void Jpeg::sofBaselineDCT(std::vector<uint8_t> &data) {
         ic._tqTable = &_quantTables[(int)ic._tq];
         _imageComponents.push_back(ic);
         
+        hMax = std::max(hMax, ic._h);
+        vMax = std::max(vMax, ic._v);
+        
         if (ic._h > _x) {
             throw std::logic_error("Image component horizontal sampling factor greater than max number of samples per line");
         }
@@ -364,6 +365,11 @@ void Jpeg::sofBaselineDCT(std::vector<uint8_t> &data) {
         if (ic._v > _y) {
             throw std::logic_error("Image component vertical sampling factor greater than max number of lines");
         }
+    }
+    
+    for (auto& ic : _imageComponents) {
+        ic._hPixelsPerSample = hMax / ic._h;
+        ic._vPixelsPerSample = vMax / ic._v;
     }
     
     if (nf != _imageComponents.size()) {

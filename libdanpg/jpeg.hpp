@@ -30,6 +30,8 @@ public:
     uint8_t _frameSamplePrecision;
     uint16_t _y; //number of lines
     uint16_t _x; //number of samples per line
+    uint8_t hMax = 0; //max horizontal sampling factor
+    uint8_t vMax = 0; //max vertical sampling factor
     
     struct ImageComponent {
         uint8_t _c; //component identifier
@@ -37,6 +39,11 @@ public:
         uint8_t _v; //vertical sampling factor
         uint8_t _tq; //quantization table destination selector
         QuantisationTable* _tqTable;
+        
+        //how many image pixels for each sample
+        //ie: Cb has 1 sample of every 2 pixels in both H and V
+        uint8_t _hPixelsPerSample;
+        uint8_t _vPixelsPerSample;
     };
     std::vector<ImageComponent> _imageComponents;
     
