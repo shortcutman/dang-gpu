@@ -219,7 +219,7 @@ void Jpeg::readScanData(std::istream &is) {
 
 namespace {
 
-void copyDUIntoPixels(size_t mcuResolution, std::vector<Colour>& pixels, DataUnit& du, size_t index, image::Jpeg::ImageComponent& ic) {
+void copyDUIntoPixels(size_t mcuResolution, std::vector<Colour>& pixels, DataUnit& du, size_t subpixelIndex, image::Jpeg::ImageComponent& ic) {
     size_t pixel = 0;
     
     size_t yDU = 0;
@@ -228,7 +228,7 @@ void copyDUIntoPixels(size_t mcuResolution, std::vector<Colour>& pixels, DataUni
         size_t xDU = 0;
         size_t xInc = 0;
         while (xDU < 8) {
-            pixels.at(pixel).setIndexColour(index, du.at(yDU * 8 + xDU));
+            pixels.at(pixel).setIndexColour(subpixelIndex, du.at(yDU * 8 + xDU));
             
             pixel++;
             xInc++;
