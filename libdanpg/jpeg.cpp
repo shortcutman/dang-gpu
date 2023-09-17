@@ -217,53 +217,75 @@ void Jpeg::readScanData(std::istream &is) {
     }
 }
 
-std::vector<Colour> Jpeg::pixelsFromImageComponents(std::vector<std::tuple<ImageComponent, std::vector<DataUnit>>> &duMap, size_t mcuResolution) {
+namespace {
+
+void copyDUIntoPixels(size_t mcuResolution, std::vector<Colour>& pixels, DataUnit& du, size_t index) {
+    size_t pixel = 0;
+    
+    size_t yDU = 0;
+    size_t yInc = 0;
+    while (yDU < 8) {
+        size_t xDU = 0;
+        size_t xInc = 0;
+        while (xDU < 8) {
+            pixels.at(pixel).setIndexColour(index, du.at(yDU * 8 + xDU));
+            
+            pixel++;
+            xInc++;
+            if (xInc >= 2) { // > icIt->_v) for vertical sampling ratio
+                xDU++;
+                xInc = 0;
+            }
+        }
+        
+        yInc++;
+        if (yInc >= 2) { // > icIt->_v) for vertical sampling ratio
+            yDU++;
+            yInc = 0;
+        }
+    }
+}
+
+}
+
+std::vector<Colour> Jpeg::readMCU(BitDecoder& dec) {
+    const size_t mcuResolution = 16;
     const uint8_t hMax = 2;
     const uint8_t vMax = 2;
     
     std::vector<Colour> pixels(mcuResolution * mcuResolution);
-    for (size_t icIdx = 0; icIdx < duMap.size(); icIdx++) {
-        auto& pair = duMap.at(icIdx);
-        auto ic  = std::get<0>(pair);
-        size_t xScale = mcuResolution / ic._h;
-        size_t yScale = mcuResolution / ic._v;
-        
-        for (size_t y = 0; y < mcuResolution; y++) {
-            for (size_t x = 0; x < mcuResolution; x++) {
-                auto icDU = std::get<1>(pair).at(x / xScale + (y / yScale) * ic._v);
-                auto icDUx = (x / (hMax / ic._h)) % 8;
-                auto icDUy = (y / (vMax / ic._v)) % 8;
-                pixels.at(x + y * mcuResolution).setIndexColour(icIdx, icDU.at(icDUx + icDUy * 8));
-            }
-        }
-    }
-
-    return pixels;
-}
-
-std::vector<Colour> Jpeg::readMCU(BitDecoder& dec) {
-    std::vector<std::tuple<ImageComponent, std::vector<DataUnit>>> duMap;
-    size_t mcuResolution = 0;
     
-    for (auto& icS : _imageComponentsInScan) {
+    for (auto icIdx = 0; icIdx < _imageComponentsInScan.size(); icIdx++) {
+        auto &icS = _imageComponentsInScan.at(icIdx);
         auto icIt = std::find_if(_imageComponents.begin(), _imageComponents.end(), [&icS] (auto t) { return icS._cs == t._c;});
         if (icIt == _imageComponents.end()) {
             throw std::runtime_error("Image Component doesn't exist");
         }
-        
+                
         size_t duCount = icIt->_h * icIt->_v;
-        mcuResolution = std::max(mcuResolution, duCount / 2 * 8);
-        std::vector<DataUnit> icDUs;
+        size_t xScale = mcuResolution / icIt->_h;
+        size_t yScale = mcuResolution / icIt->_v;
+        std::vector<DataUnit> dus;
         
         for (size_t i = 0; i < duCount; i++) {
             auto du = idct(dequantiseBlock(readBlock(dec, icS), *icIt));
-            icDUs.push_back(du);
+            dus.push_back(du);
         }
-        duMap.push_back(std::make_tuple(*icIt, icDUs));
+        
+        if (duCount == 1) {
+            copyDUIntoPixels(mcuResolution, pixels, dus.front(), icIdx);
+        } else {
+            for (size_t y = 0; y < mcuResolution; y++) {
+                auto icDUy = (y / (vMax / icIt->_v)) % 8;
+                for (size_t x = 0; x < mcuResolution; x++) {
+                    auto icDU = dus.at(x / xScale + (y / yScale) * icIt->_v);
+                    auto icDUx = (x / (hMax / icIt->_h)) % 8;
+                    pixels.at(x + y * mcuResolution).setIndexColour(icIdx, icDU.at(icDUx + icDUy * 8));
+                }
+            }
+        }
     }
-    
-    std::vector<Colour> pixels = pixelsFromImageComponents(duMap, mcuResolution);
-    
+        
     ycbcrToRGBInPlace(pixels);
     
     return pixels;
