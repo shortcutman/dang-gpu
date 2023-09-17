@@ -31,7 +31,22 @@ struct Colour {
         int cb;
     };
     
-    void setIndexColour(size_t index, int value);
+    inline void setIndexColour(size_t index, int value) {
+        switch (index) {
+            case 0:
+                y = value;
+                break;
+            case 1:
+                cb = value;
+                break;
+            case 2:
+                cr = value;
+                break;
+            default:
+                throw std::logic_error("index out of bounds for colour");
+                break;
+        }
+    }
 };
 
 Colour ycbcrToRGB(const Colour& ycbcr);
