@@ -24,7 +24,7 @@ DataUnit idct_int_table(const DataUnit& du);
 #define idct idct_float_loeffler
 
 std::array<int, 8> loeffler_1d_dct(const std::array<int, 8> in);
-std::array<float, 8> loeffler_1d_idct(const std::array<float, 8> in);
+inline std::array<float, 8> loeffler_1d_idct(const std::array<float, 8> in);
 
 }
 
