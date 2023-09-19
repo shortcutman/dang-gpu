@@ -55,7 +55,7 @@ struct Colour {
     }
 };
 
-Colour ycbcrToRGB(const Colour& ycbcr);
+inline Colour ycbcrToRGB(const Colour& ycbcr);
 void ycbcrToRGBInPlace(std::span<Colour> data);
 
 void writeOutPPM(std::string filepath, size_t width, size_t height, std::span<Colour> data);

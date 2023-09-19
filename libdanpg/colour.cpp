@@ -13,7 +13,7 @@ using namespace image;
 
 namespace {
 
-int adjustAndClamp(float val) {
+inline int adjustAndClamp(float val) {
     val += 128.f;
     
     if (val > 255) {
