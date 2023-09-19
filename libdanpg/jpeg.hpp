@@ -72,7 +72,7 @@ public:
     
     void readData(std::istream& is);
     void readScanData(std::istream& is);
-    std::vector<Colour> readMCU(BitDecoder& dec);
+    void readMCU(BitDecoder& dec, std::vector<Colour>& mcu);
     DataUnit readBlock(BitDecoder& dec, ImageComponentInScan& ic);
     uint8_t deZigZag(uint8_t index);
     DataUnit dequantiseBlock(DataUnit du, ImageComponent ic);
