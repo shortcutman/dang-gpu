@@ -18,6 +18,7 @@
 #include <numbers>
 #include <cmath>
 #include <strstream>
+#include <cassert>
 
 #include <arpa/inet.h>
 
