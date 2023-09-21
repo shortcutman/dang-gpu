@@ -273,20 +273,16 @@ void Jpeg::readMCU(BitDecoder& dec, std::vector<Colour>& mcu) {
     
     for (auto icIdx = 0; icIdx < _imageComponentsInScan.size(); icIdx++) {
         auto &icS = _imageComponentsInScan.at(icIdx);
-        auto icIt = std::find_if(_imageComponents.begin(), _imageComponents.end(), [&icS] (auto t) { return icS._cs == t._c;});
-        if (icIt == _imageComponents.end()) {
-            throw std::runtime_error("Image Component doesn't exist");
-        }
                 
-        size_t duCount = icIt->_h * icIt->_v;
+        size_t duCount = icS._ic->_h * icS._ic->_v;
         
         if (duCount == 1) {
-            auto du = idct(dequantiseBlock(readBlock(dec, icS), *icIt));
-            copyDUIntoPixels(mcuResolution, mcu, du, icIdx, *icIt);
+            auto du = idct(dequantiseBlock(readBlock(dec, icS), *(icS._ic)));
+            copyDUIntoPixels(mcuResolution, mcu, du, icIdx, *(icS._ic));
         } else {
             for (size_t i = 0; i < duCount; i++) {
-                auto du = idct(dequantiseBlock(readBlock(dec, icS), *icIt));
-                copy4DUIntoPixels(mcuResolution, mcu, du, icIdx, *icIt, i);
+                auto du = idct(dequantiseBlock(readBlock(dec, icS), *(icS._ic)));
+                copy4DUIntoPixels(mcuResolution, mcu, du, icIdx, *(icS._ic), i);
             }
         }
     }
@@ -396,9 +392,11 @@ void Jpeg::startOfScan(std::vector<uint8_t> &data) {
         ImageComponentInScan ic;
         ic._cs = *reinterpret_cast<uint8_t*>(&data[byteStart]);
         
-        if (std::find_if(std::begin(_imageComponents), std::end(_imageComponents), [&ic] (const ImageComponent& el) { return ic._cs == el._c; } ) == std::end(_imageComponents)) {
+        auto imgComponent = std::find_if(std::begin(_imageComponents), std::end(_imageComponents), [&ic] (const ImageComponent& el) { return ic._cs == el._c; } );
+        if (imgComponent == std::end(_imageComponents)) {
             throw std::logic_error("Scan image component not found in frame");
         }
+        ic._ic = &(*imgComponent);
         
         ic._td = *reinterpret_cast<uint8_t*>(&data[byteStart + 1]) >> 4;
         ic._ta = *reinterpret_cast<uint8_t*>(&data[byteStart + 1]) & 0x0F;
