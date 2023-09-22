@@ -147,7 +147,7 @@ Jpeg::DataUnit Jpeg::readBlock(BitDecoder& dec, ImageComponentInScan& ic) {
             uint8_t ssss = rs & 0x0F;
             auto receive = dec.nextXBits(ssss);
             auto res = extend(receive, ssss);
-            du[k] = res;
+            du[deZigZag(k)] = res * (*ic._ic->_tqTable)[k];
         }
     } while (k < 63);
     
@@ -169,15 +169,6 @@ uint8_t Jpeg::deZigZag(uint8_t index) {
     assert(index < 64);
     
     return zigzagTable[index];
-}
-
-Jpeg::DataUnit Jpeg::dequantiseBlock(DataUnit du, ImageComponent ic) {
-    DataUnit out;
-    for (uint8_t i = 0; i < du.size(); i++) {
-        out[deZigZag(i)] = (int)du[i] * (*ic._tqTable)[i];
-    }
-    
-    return out;
 }
 
 void Jpeg::readScanData(std::istream &is) {
@@ -278,11 +269,11 @@ void Jpeg::readMCU(BitDecoder& dec, std::vector<Colour>& mcu) {
         size_t duCount = icS._ic->_h * icS._ic->_v;
         
         if (duCount == 1) {
-            auto du = idct(dequantiseBlock(readBlock(dec, icS), *(icS._ic)));
+            auto du = idct(readBlock(dec, icS));
             copyDUIntoPixels(mcuResolution, mcu, du, icIdx, *(icS._ic));
         } else {
             for (size_t i = 0; i < duCount; i++) {
-                auto du = idct(dequantiseBlock(readBlock(dec, icS), *(icS._ic)));
+                auto du = idct(readBlock(dec, icS));
                 copy4DUIntoPixels(mcuResolution, mcu, du, icIdx, *(icS._ic), i);
             }
         }
