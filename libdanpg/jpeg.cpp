@@ -174,7 +174,6 @@ uint8_t Jpeg::deZigZag(uint8_t index) {
 void Jpeg::readScanData(std::istream &is) {
     std::cout << "Reading scan data from position: " << is.tellg() << std::endl;
     
-    _image.resize(_x * _y, {0, 0, 0});
     size_t x = 0;
     size_t y = 0;
         
@@ -336,6 +335,8 @@ void Jpeg::sofBaselineDCT(std::vector<uint8_t> &data) {
     _x = *reinterpret_cast<uint16_t*>(&data[3]);
     _x = htons(_x);
     uint8_t nf = *reinterpret_cast<uint8_t*>(&data[5]);
+    
+    _image = static_cast<Colour*>(malloc(_x * _y * sizeof(Colour)));
     
     for (unsigned int i = 0; i < nf; i++) {
         size_t byteStart = 6 + i * 3; //8 bits + 4 bits + 4 bits + 8 bits

@@ -36,7 +36,7 @@ int main(int argc, const char * argv[]) {
             jpeg = image::Jpeg(f);
         });
         
-        image::writeOutPPM("/private/tmp/jpeg.ppm", jpeg._x, jpeg._y, jpeg._image);
+        image::writeOutPPM("/private/tmp/jpeg.ppm", jpeg._x, jpeg._y, std::span{jpeg._image, jpeg._x * jpeg._y * sizeof(image::Colour)});
     }
     
     return 0;
