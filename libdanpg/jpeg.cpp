@@ -40,7 +40,7 @@ Jpeg::Jpeg(std::istream& is) {
         } else {
             readScanData(is);
         }
-    }
+    }    
 }
 
 Jpeg::Jpeg() {
@@ -183,17 +183,10 @@ void Jpeg::readScanData(std::istream &is) {
     try {
         while (is.peek() != std::istream::traits_type::eof()) {
             const size_t mcuRes = 16;
-            std::vector<Colour> mcu(16*16);
             
             try {
-                std::memset(&mcu[0], 0, sizeof(Colour) * 16 * 16);
-                readMCU(dec, mcu);
-                
-                for (size_t line = 0; line < mcuRes; line++) {
-                    size_t imageOffset = x + (y + line) * _x;
-                    std::memcpy(&_image[imageOffset], &mcu[line * mcuRes], mcuRes * sizeof(Colour));
-                }
-                
+                readMCU(dec, x, y);
+                                
                 x += mcuRes;
                 if (x >= _x) {
                     x = 0;
@@ -208,20 +201,21 @@ void Jpeg::readScanData(std::istream &is) {
     } catch (std::exception& e) {
         std::cout << "readScanData, exception: " << e.what() << std::endl;
     }
+    
 }
 
-namespace {
-
-void copyDUIntoPixels(size_t mcuResolution, std::vector<Colour>& pixels, DataUnit& du, size_t subpixelIndex, image::Jpeg::ImageComponent& ic) {
-    size_t pixel = 0;
+void Jpeg::copyDUIntoPixels(DataUnit& du, size_t subpixelIndex, image::Jpeg::ImageComponent& ic, const size_t x, const size_t y) {
+    size_t yCounter = y;
+    size_t pixel;
     
     size_t yDU = 0;
     size_t yInc = 0;
     while (yDU < 8) {
+        pixel = yCounter * _x + x;
         size_t xDU = 0;
         size_t xInc = 0;
         while (xDU < 8) {
-            pixels.at(pixel).setIndexColour(subpixelIndex, du.at(yDU * 8 + xDU));
+            _image[pixel].setIndexColour(subpixelIndex, du.at(yDU * 8 + xDU));
             
             pixel++;
             xInc++;
@@ -232,6 +226,7 @@ void copyDUIntoPixels(size_t mcuResolution, std::vector<Colour>& pixels, DataUni
         }
         
         yInc++;
+        yCounter++;
         if (yInc >= ic._vPixelsPerSample) {
             yDU++;
             yInc = 0;
@@ -239,29 +234,28 @@ void copyDUIntoPixels(size_t mcuResolution, std::vector<Colour>& pixels, DataUni
     }
 }
 
-void copy4DUIntoPixels(size_t mcuResolution, std::vector<Colour>& pixels, DataUnit& du, size_t subpixelIndex, image::Jpeg::ImageComponent& ic, size_t duIndex) {
-    const std::array<size_t, 4> pixelStart = {0, 8, 128, 136};    
-    size_t pixel = pixelStart[duIndex];
+void Jpeg::copy4DUIntoPixels(DataUnit& du, size_t subpixelIndex, image::Jpeg::ImageComponent& ic, size_t duIndex, size_t x, size_t y) {
+    const std::array<size_t, 4> yOffsetForDU = {0, 0, 8, 8};
+    const std::array<size_t, 4> xOffsetForDU = {0, 8, 0, 8};
+    size_t yCounter = y + yOffsetForDU[duIndex];
+    size_t pixel;
     
     size_t yDU = 0;
     while (yDU < 8) {
+        pixel = yCounter * _x + x + xOffsetForDU[duIndex];
         size_t xDU = 0;
         while (xDU < 8) {
-            pixels.at(pixel).setIndexColour(subpixelIndex, du.at(yDU * 8 + xDU));
+            _image[pixel].setIndexColour(subpixelIndex, du.at(yDU * 8 + xDU));
             pixel++;
             xDU++;
         }
         
-        pixel += 8;
+        yCounter++;
         yDU++;
     }
 }
 
-}
-
-void Jpeg::readMCU(BitDecoder& dec, std::vector<Colour>& mcu) {
-    const size_t mcuResolution = 16;
-    
+void Jpeg::readMCU(BitDecoder& dec, size_t x, size_t y) {
     for (auto icIdx = 0; icIdx < _imageComponentsInScan.size(); icIdx++) {
         auto &icS = _imageComponentsInScan.at(icIdx);
                 
@@ -269,16 +263,16 @@ void Jpeg::readMCU(BitDecoder& dec, std::vector<Colour>& mcu) {
         
         if (duCount == 1) {
             auto du = idct(readBlock(dec, icS));
-            copyDUIntoPixels(mcuResolution, mcu, du, icIdx, *(icS._ic));
+            copyDUIntoPixels(du, icIdx, *(icS._ic), x, y);
         } else {
             for (size_t i = 0; i < duCount; i++) {
                 auto du = idct(readBlock(dec, icS));
-                copy4DUIntoPixels(mcuResolution, mcu, du, icIdx, *(icS._ic), i);
+                copy4DUIntoPixels(du, icIdx, *(icS._ic), i, x, y);
             }
         }
     }
-        
-    ycbcrToRGBInPlace(mcu);
+    
+    ycbcrToRGBOverMCU(_image, _x, x, y);
 }
 
 void Jpeg::appZeroData(std::vector<uint8_t> &data) {

@@ -56,7 +56,7 @@ struct Colour {
 };
 
 inline Colour ycbcrToRGB(const Colour& ycbcr);
-void ycbcrToRGBInPlace(std::span<Colour> data);
+void ycbcrToRGBOverMCU(Colour* data, size_t width, size_t x, size_t y);
 
 void writeOutPPM(std::string filepath, size_t width, size_t height, std::span<Colour> data);
 

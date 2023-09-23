@@ -73,7 +73,7 @@ public:
     
     void readData(std::istream& is);
     void readScanData(std::istream& is);
-    void readMCU(BitDecoder& dec, std::vector<Colour>& mcu);
+    void readMCU(BitDecoder& dec, size_t x, size_t y);
     DataUnit readBlock(BitDecoder& dec, ImageComponentInScan& ic);
     uint8_t deZigZag(uint8_t index);
     
@@ -84,6 +84,10 @@ public:
     void sofBaselineDCT(std::vector<uint8_t>& data);
     void startOfScan(std::vector<uint8_t>& data);
     void restartInterval(std::vector<uint8_t>& data);
+    
+    void copyDUIntoPixels(DataUnit& du, size_t subpixelIndex, image::Jpeg::ImageComponent& ic, const size_t x, const size_t y);
+    
+    void copy4DUIntoPixels(DataUnit& du, size_t subpixelIndex, image::Jpeg::ImageComponent& ic, size_t duIndex, const size_t x, const size_t y);
     
 };
 

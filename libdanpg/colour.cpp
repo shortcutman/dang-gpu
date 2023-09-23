@@ -34,9 +34,11 @@ Colour image::ycbcrToRGB(const Colour& ycbcr) {
     return {r, g, b};
 }
 
-void image::ycbcrToRGBInPlace(std::span<Colour> data) {
-    for (auto& c : data) {
-        c = ycbcrToRGB(c);
+void image::ycbcrToRGBOverMCU(Colour *data, size_t width, size_t xStart, size_t yStart) {
+    for (size_t y = yStart; y < (yStart + 16); y++) {
+        for (size_t x = xStart; x < (xStart + 16); x++) {
+            data[y * width + x] = ycbcrToRGB(data[y * width + x]);
+        }
     }
 }
 
