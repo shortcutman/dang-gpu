@@ -125,7 +125,7 @@ Jpeg::DataUnit Jpeg::readBlock(BitDecoder& dec, ImageComponentInScan& ic) {
     if (t > 15) throw std::runtime_error("syntax error, dc ssss great than 15");
     auto diffReceive = dec.nextXBits(t);
     ic.prevDC += extend(diffReceive, t);
-    du[0] = ic.prevDC;
+    du[0] = ic.prevDC * (*ic._ic->_tqTable)[0];
     
     //read ac coefficients. f.2.2.2
     dec.setTable(ic._taTable);
