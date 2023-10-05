@@ -215,7 +215,7 @@ void Jpeg::copyDUIntoPixels(DataUnit& du, size_t subpixelIndex, image::Jpeg::Ima
         size_t xDU = 0;
         size_t xInc = 0;
         while (xDU < 8) {
-            _image[pixel].setIndexColour(subpixelIndex, du.at(yDU * 8 + xDU));
+            _image[pixel].setIndexColour(subpixelIndex, du[yDU * 8 + xDU]);
             
             pixel++;
             xInc++;
@@ -245,7 +245,7 @@ void Jpeg::copy4DUIntoPixels(DataUnit& du, size_t subpixelIndex, image::Jpeg::Im
         pixel = yCounter * _x + x + xOffsetForDU[duIndex];
         size_t xDU = 0;
         while (xDU < 8) {
-            _image[pixel].setIndexColour(subpixelIndex, du.at(yDU * 8 + xDU));
+            _image[pixel].setIndexColour(subpixelIndex, du[yDU * 8 + xDU]);
             pixel++;
             xDU++;
         }
@@ -257,7 +257,7 @@ void Jpeg::copy4DUIntoPixels(DataUnit& du, size_t subpixelIndex, image::Jpeg::Im
 
 void Jpeg::readMCU(BitDecoder& dec, size_t x, size_t y) {
     for (auto icIdx = 0; icIdx < _imageComponentsInScan.size(); icIdx++) {
-        auto &icS = _imageComponentsInScan.at(icIdx);
+        auto &icS = _imageComponentsInScan[icIdx];
                 
         size_t duCount = icS._ic->_h * icS._ic->_v;
         
