@@ -106,13 +106,49 @@ uint16_t BitDecoder::nextXBits(size_t bits) {
         throw std::logic_error("Advancing by more than 16 bits not supported");
     }
     
+    bufferBits(bits);
+    
+    if (bits > _bitsBuffered) {
+        throw std::runtime_error("Not enough bytes for request");
+    }
+    
+    uint16_t requestedBits = _currentBytes >> (_bitsBuffered - bits);
+    _currentBytes = static_cast<uint32_t>(static_cast<uint64_t>(_currentBytes) << (32 - _bitsBuffered + bits));
+    _currentBytes = _currentBytes >> (32 - (_bitsBuffered - bits));
+    _bitsBuffered -= bits;
+    return requestedBits;
+}
+
+uint16_t BitDecoder::peakXBits(size_t bits) {
+    if (bits > 16) {
+        throw std::logic_error("Advancing by more than 16 bits not supported");
+    }
+    
+    bufferBits(bits);
+    
+    if (_bitsBuffered > bits) {
+        uint16_t requestedBits = _currentBytes >> (_bitsBuffered - bits);
+        return requestedBits;
+    } else {
+        uint16_t requestedBits = _currentBytes << (bits - _bitsBuffered);
+        return requestedBits;
+    }
+}
+
+void BitDecoder::bufferBits(size_t bits) {
+    if (bits > 16) {
+        throw std::logic_error("Advancing by more than 16 bits not supported");
+    }
+    
     while (_bitsBuffered < bits) {
         auto nextByte = _data->get();
         if (nextByte == std::istream::traits_type::eof()) {
-            throw std::runtime_error("Not enough bytes for request");
+            break;
         } else if (nextByte == 0xFF) {
             auto peekByte = _data->peek();
-            if (peekByte == 0x00) {
+            if (peekByte == std::istream::traits_type::eof()) {
+                throw std::runtime_error("Marker segment with no other byte");
+            } else if (peekByte == 0x00) {
                 _data->get(); //byte stuffing, F.1.2.3. throw this away.
             } else if (peekByte >= 0xD0 && peekByte <= 0xD7) {
                 //restart marker, consume marker, reset own state, and signal caller to reset
@@ -132,10 +168,4 @@ uint16_t BitDecoder::nextXBits(size_t bits) {
         _currentBytes |= nextByte;
         _bitsBuffered += 8;
     }
-    
-    uint16_t requestedBits = _currentBytes >> (_bitsBuffered - bits);
-    _currentBytes = static_cast<uint32_t>(static_cast<uint64_t>(_currentBytes) << (32 - _bitsBuffered + bits));
-    _currentBytes = _currentBytes >> (32 - (_bitsBuffered - bits));
-    _bitsBuffered -= bits;
-    return requestedBits;
 }

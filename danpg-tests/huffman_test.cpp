@@ -283,4 +283,125 @@ TEST_F(HuffmanDecoderTest, Decode3bitSkip3Then3bit) {
     EXPECT_EQ(huffmanByte, 0x04);
 }
 
+TEST_F(HuffmanDecoderTest, PeakAndRead3bitThen3bit) {
+    // code b100: val 0x03, code b101 : val 0x4, b00 padding
+    std::vector<uint8_t> encoded = {0x94};
+    std::istrstream is(reinterpret_cast<const char*>(encoded.data()), encoded.size());
+    decoder.setData(&is);
+    
+    auto byte = decoder.peakXBits(3);
+    EXPECT_EQ(byte, 0b100);
+    
+    byte = decoder.nextXBits(3);
+    EXPECT_EQ(byte, 0b100);
+    
+    byte = decoder.peakXBits(3);
+    EXPECT_EQ(byte, 0b101);
+    
+    byte = decoder.nextXBits(3);
+    EXPECT_EQ(byte, 0b101);
+}
+
+TEST_F(HuffmanDecoderTest, PeakAndRead8bitThen3bit) {
+    std::vector<uint8_t> encoded = {0xFF, 0x00, 0x00};
+    std::istrstream is(reinterpret_cast<const char*>(encoded.data()), encoded.size());
+    decoder.setData(&is);
+    auto byte = decoder.peakXBits(8);
+    EXPECT_EQ(byte, 0xFF);
+    
+    byte = decoder.nextXBits(8);
+    EXPECT_EQ(byte, 0xFF);
+    
+    byte = decoder.peakXBits(3);
+    EXPECT_EQ(byte, 0x00);
+    
+    byte = decoder.nextXBits(3);
+    EXPECT_EQ(byte, 0x00);
+}
+
+TEST_F(HuffmanDecoderTest, PeakAndRead3bitThen5bitThen3bit) {
+    std::vector<uint8_t> encoded = {0xFF, 0x00, 0x00};
+    std::istrstream is(reinterpret_cast<const char*>(encoded.data()), encoded.size());
+    decoder.setData(&is);
+    auto byte = decoder.peakXBits(3);
+    EXPECT_EQ(byte, 0b111);
+    
+    byte = decoder.nextXBits(3);
+    EXPECT_EQ(byte, 0b111);
+    
+    byte = decoder.peakXBits(5);
+    EXPECT_EQ(byte, 0b11111);
+    
+    byte = decoder.nextXBits(5);
+    EXPECT_EQ(byte, 0b11111);
+    
+    byte = decoder.peakXBits(3);
+    EXPECT_EQ(byte, 0x00);
+    
+    byte = decoder.nextXBits(3);
+    EXPECT_EQ(byte, 0x00);
+}
+
+TEST_F(HuffmanDecoderTest, Peak9bitFailRead) {
+    std::vector<uint8_t> encoded = {0xF0};
+    std::istrstream is(reinterpret_cast<const char*>(encoded.data()), encoded.size());
+    decoder.setData(&is);
+    auto byte = decoder.peakXBits(9);
+    EXPECT_EQ(byte, 0x1e0);
+    
+    EXPECT_THROW(decoder.nextXBits(9), std::runtime_error);
+}
+
+TEST_F(HuffmanDecoderTest, Peak16bitFailRead) {
+    std::vector<uint8_t> encoded = {0xF0};
+    std::istrstream is(reinterpret_cast<const char*>(encoded.data()), encoded.size());
+    decoder.setData(&is);
+    auto byte = decoder.peakXBits(16);
+    EXPECT_EQ(byte, 0xF000);
+    
+    EXPECT_THROW(decoder.nextXBits(16), std::runtime_error);
+}
+
+TEST_F(HuffmanDecoderTest, Peak16bitRead4bit) {
+    std::vector<uint8_t> encoded = {0xF0};
+    std::istrstream is(reinterpret_cast<const char*>(encoded.data()), encoded.size());
+    decoder.setData(&is);
+    auto byte = decoder.peakXBits(16);
+    EXPECT_EQ(byte, 0xF000);
+    
+    byte = decoder.nextXBits(4);
+    EXPECT_EQ(byte, 0x0F);
+    
+    byte = decoder.peakXBits(16);
+    EXPECT_EQ(byte, 0x0000);
+    
+    byte = decoder.nextXBits(4);
+    EXPECT_EQ(byte, 0x00);
+    
+    EXPECT_THROW(decoder.nextXBits(8), std::runtime_error);
+}
+
+TEST_F(HuffmanDecoderTest, Peak16bitRead4and4) {
+    std::vector<uint8_t> encoded = {0xF5, 0xAD};
+    std::istrstream is(reinterpret_cast<const char*>(encoded.data()), encoded.size());
+    decoder.setData(&is);
+    auto byte = decoder.peakXBits(16);
+    EXPECT_EQ(byte, 0xF5AD);
+    
+    byte = decoder.nextXBits(4);
+    EXPECT_EQ(byte, 0x0F);
+    
+    byte = decoder.peakXBits(16);
+    EXPECT_EQ(byte, 0x5AD0);
+    
+    byte = decoder.nextXBits(4);
+    EXPECT_EQ(byte, 0x05);
+    
+    byte = decoder.nextXBits(4);
+    EXPECT_EQ(byte, 0x0A);
+    
+    byte = decoder.nextXBits(4);
+    EXPECT_EQ(byte, 0x0D);
+}
+
 }
