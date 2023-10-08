@@ -252,6 +252,35 @@ TEST_F(HuffmanDecoderTest, DecodeMarkerSegmentException) {
     EXPECT_THROW(decoder.nextHuffmanByte(), ResetMarkerException);
 }
 
+TEST_F(HuffmanDecoderTest, PeekAndReadMarkerSegment) {
+    std::vector<uint8_t> encoded = {0xFF, 0xD0};
+    std::istrstream is(reinterpret_cast<const char*>(encoded.data()), encoded.size());
+    decoder.setData(&is);
+    EXPECT_EQ(decoder.peakXBits(16), 0x0000);
+    EXPECT_THROW(decoder.nextXBits(16), ResetMarkerException);
+}
+
+TEST_F(HuffmanDecoderTest, PeekAndReadAheadofMarkerSegment) {
+    std::vector<uint8_t> encoded = {0xD0, 0xFF, 0xD0, 0x00};
+    std::istrstream is(reinterpret_cast<const char*>(encoded.data()), encoded.size());
+    decoder.setData(&is);
+    EXPECT_EQ(decoder.peakXBits(4), 0xD);
+    EXPECT_EQ(decoder.peakXBits(16), 0xD000);
+    EXPECT_EQ(decoder.nextXBits(4), 0x0D);
+    EXPECT_EQ(decoder.nextXBits(4), 0x00);
+    EXPECT_THROW(decoder.nextXBits(16), ResetMarkerException);
+}
+
+TEST_F(HuffmanDecoderTest, PeekAndReadAheadofMarkerSegment2) {
+    std::vector<uint8_t> encoded = {0xD0, 0xFF, 0xD0, 0x00};
+    std::istrstream is(reinterpret_cast<const char*>(encoded.data()), encoded.size());
+    decoder.setData(&is);
+    EXPECT_EQ(decoder.peakXBits(16), 0xD000);
+    EXPECT_EQ(decoder.nextXBits(4), 0x0D);
+    EXPECT_EQ(decoder.nextXBits(4), 0x00);
+    EXPECT_THROW(decoder.nextXBits(16), ResetMarkerException);
+}
+
 TEST_F(HuffmanDecoderTest, NotEnoughBytesErrorDueToNoBytes) {
     std::vector<uint8_t> encoded = {0xFF};
     std::istrstream is(reinterpret_cast<const char*>(encoded.data()), encoded.size());

@@ -67,6 +67,31 @@ HuffmanTable HuffmanTable::build(std::span<uint8_t> data) {
     table._huffval = huffval;
     table._huffsize = huffsize;
     table._huffcode = huffcode;
+
+    size_t remainingListVals = 65536;
+    size_t width = 65536;
+    size_t huffcodesIndex = 0;
+    auto* hufflistIdx = &table._hufflist[0];
+    for (size_t bit = 1; bit <= 16; ++bit) {
+        width /= 2;
+        size_t bitCount = bits[bit - 1];
+        if (!bitCount) continue;
+        remainingListVals -= bitCount << (16 - bit);
+        if (remainingListVals < 0 ) throw std::runtime_error("");
+        for (size_t i = 0; i < bitCount; i++, huffcodesIndex++) {
+            uint8_t huffval = table._huffval[huffcodesIndex];
+            for (size_t j = 0; j < width; j++) {
+                hufflistIdx->size = bit;
+                hufflistIdx->val = huffval;
+                ++hufflistIdx;
+            }
+        }
+    }
+    while (remainingListVals--) {
+        hufflistIdx->size = 0;
+        ++hufflistIdx;
+    }
+    
     return table;
 }
 
@@ -79,26 +104,14 @@ void BitDecoder::setData(std::istream* data) {
 }
 
 uint8_t BitDecoder::nextHuffmanByte() {
-    uint8_t numberOfBits = 0;
-    uint16_t potentialCode = 0;
-    for (size_t i = 0; i < _table->_huffcode.size(); i++) {
-        if (_table->_huffsize[i] > numberOfBits) {
-            uint8_t numberOfNewBits = _table->_huffsize[i] - numberOfBits;
-            numberOfBits = _table->_huffsize[i];
-            
-            potentialCode <<= numberOfNewBits;
-            potentialCode |= nextXBits(numberOfNewBits);
-        }
-        
-        uint16_t codeEntry = _table->_huffcode[i];
-        
-        if (codeEntry == potentialCode) {
-            return _table->_huffval[i];
-        }
+    uint16_t potentialCode = peakXBits(16);
+    auto entry = _table->_hufflist[potentialCode];
+    if (entry.size == 0) {
+        throw std::runtime_error("huffman error");
     }
     
-    throw std::runtime_error("No code found.");
-    return 0;
+    nextXBits(entry.size);
+    return entry.val;
 }
 
 uint16_t BitDecoder::nextXBits(size_t bits) {
@@ -106,7 +119,7 @@ uint16_t BitDecoder::nextXBits(size_t bits) {
         throw std::logic_error("Advancing by more than 16 bits not supported");
     }
     
-    bufferBits(bits);
+    bufferBits(bits, true);
     
     if (bits > _bitsBuffered) {
         throw std::runtime_error("Not enough bytes for request");
@@ -124,7 +137,7 @@ uint16_t BitDecoder::peakXBits(size_t bits) {
         throw std::logic_error("Advancing by more than 16 bits not supported");
     }
     
-    bufferBits(bits);
+    bufferBits(bits, false);
     
     if (_bitsBuffered > bits) {
         uint16_t requestedBits = _currentBytes >> (_bitsBuffered - bits);
@@ -135,9 +148,25 @@ uint16_t BitDecoder::peakXBits(size_t bits) {
     }
 }
 
-void BitDecoder::bufferBits(size_t bits) {
+void BitDecoder::bufferBits(size_t bits, bool reading) {
     if (bits > 16) {
         throw std::logic_error("Advancing by more than 16 bits not supported");
+    }
+    
+    if (_markerBit) {
+        if (bits > *_markerBit) {
+            if (reading) {
+                _bitsIntoByte = 0;
+                _bitsBuffered = 0;
+                _currentBytes = 0;
+                _markerBit.reset();
+                throw ResetMarkerException();
+            } else {
+                return;
+            }
+        } else if (reading) {
+            _markerBit = *_markerBit - bits;
+        }
     }
     
     while (_bitsBuffered < bits) {
@@ -153,10 +182,8 @@ void BitDecoder::bufferBits(size_t bits) {
             } else if (peekByte >= 0xD0 && peekByte <= 0xD7) {
                 //restart marker, consume marker, reset own state, and signal caller to reset
                 _data->get();
-                _bitsIntoByte = 0;
-                _bitsBuffered = 0;
-                _currentBytes = 0;
-                throw ResetMarkerException();
+                _markerBit = _bitsBuffered;
+                break;
             } else {
                 std::stringstream ss;
                 ss << "Marker: " << std::hex << 0xFF << peekByte;

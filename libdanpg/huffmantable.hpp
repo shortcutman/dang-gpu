@@ -22,6 +22,13 @@ public:
     std::vector<uint8_t> _huffval;
     std::vector<uint8_t> _huffsize;
     std::vector<uint16_t> _huffcode;
+    
+    struct HuffEntry {
+        uint8_t size;
+        uint8_t val;
+    };
+    
+    std::array<HuffEntry, 65536> _hufflist;
         
     static HuffmanTable build(std::span<uint8_t> data);
 };
@@ -38,6 +45,7 @@ private:
     uint32_t _bitsIntoByte = 0;
     uint32_t _bitsBuffered = 0;
     uint32_t _currentBytes = 0;
+    std::optional<uint32_t> _markerBit;
     
 public:
     void setTable(HuffmanTable* table);
@@ -48,7 +56,7 @@ public:
     uint16_t nextXBits(size_t bits);
     
 protected:
-    void bufferBits(size_t bits);
+    void bufferBits(size_t bits, bool reading);
 };
 
 #endif /* huffmantable_hpp */
