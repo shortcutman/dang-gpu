@@ -275,14 +275,14 @@ void Jpeg::readMCU(BitDecoder& dec, size_t x, size_t y) {
     ycbcrToRGBOverMCU(_image, _x, x, y);
 }
 
-void Jpeg::appZeroData(std::vector<uint8_t> &data) {
+void Jpeg::appZeroData(std::span<uint8_t> data) {
     std::cout << "\tDecoding APP0 data per JFIF" << std::endl;
     _identifier.insert(_identifier.end(), data.begin(), data.begin() + 5);
     _version = *reinterpret_cast<uint16_t*>(&data[5]);
     _units = *reinterpret_cast<uint8_t*>(&data[7]);
 }
 
-void Jpeg::quantisationTable(std::vector<uint8_t> &data) {
+void Jpeg::quantisationTable(std::span<uint8_t> data) {
     std::cout << "\tQuantisation Table data per B.2.4.1" << std::endl;
     
     uint16_t index = 0;
@@ -303,7 +303,7 @@ void Jpeg::quantisationTable(std::vector<uint8_t> &data) {
     }
 }
 
-void Jpeg::huffmanTable(std::vector<uint8_t> &data) {
+void Jpeg::huffmanTable(std::span<uint8_t> data) {
     std::cout << "\n\tDHT Define Huffman table " << data.size() << " bytes";
     
     uint8_t tableClass = (*reinterpret_cast<uint8_t*>(&data[0]) & 0xF0) >> 4;
@@ -320,7 +320,7 @@ void Jpeg::huffmanTable(std::vector<uint8_t> &data) {
     }
 }
 
-void Jpeg::sofBaselineDCT(std::vector<uint8_t> &data) {
+void Jpeg::sofBaselineDCT(std::span<uint8_t> data) {
     std::cout << "\n\tSOF0 Baseline DCT Start of Frame" << std::endl;
     
     _frameSamplePrecision = *reinterpret_cast<uint8_t*>(&data[0]);
@@ -365,7 +365,7 @@ void Jpeg::sofBaselineDCT(std::vector<uint8_t> &data) {
     }
 }
 
-void Jpeg::startOfScan(std::vector<uint8_t> &data) {
+void Jpeg::startOfScan(std::span<uint8_t> data) {
     std::cout << "\n\tSOS Start of Scan" << std::endl;
     
     uint8_t ns = *reinterpret_cast<uint8_t*>(&data[0]);
@@ -406,7 +406,7 @@ void Jpeg::startOfScan(std::vector<uint8_t> &data) {
     _inScan = true;
 }
 
-void Jpeg::restartInterval(std::vector<uint8_t> &data) {
+void Jpeg::restartInterval(std::span<uint8_t> data) {
     if (data.size() != 2) {
         throw std::runtime_error("restart interval length is wrong");
     }

@@ -77,13 +77,13 @@ public:
     DataUnit readBlock(BitDecoder& dec, ImageComponentInScan& ic);
     uint8_t deZigZag(uint8_t index);
     
-    void appZeroData(std::vector<uint8_t>& data);
-    void quantisationTable(std::vector<uint8_t>& data);
-    void huffmanTable(std::vector<uint8_t>& data);
+    void appZeroData(std::span<uint8_t> data);
+    void quantisationTable(std::span<uint8_t> data);
+    void huffmanTable(std::span<uint8_t> data);
     
-    void sofBaselineDCT(std::vector<uint8_t>& data);
-    void startOfScan(std::vector<uint8_t>& data);
-    void restartInterval(std::vector<uint8_t>& data);
+    void sofBaselineDCT(std::span<uint8_t> data);
+    void startOfScan(std::span<uint8_t> data);
+    void restartInterval(std::span<uint8_t> data);
     
     void copyDUIntoPixels(DataUnit& du, size_t subpixelIndex, image::Jpeg::ImageComponent& ic, const size_t x, const size_t y);
     
