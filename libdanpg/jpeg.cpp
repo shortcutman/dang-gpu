@@ -33,12 +33,15 @@ T getAs(void* data) {
 
 }
 
-Jpeg::Jpeg(std::istream& is) {
-    while (!is.eof()) {
+Jpeg::Jpeg(std::span<uint8_t> is) {
+    size_t position = 0;
+    
+    while (position < is.size()) {
+        auto data = std::span{is.begin() + position, is.size() - position};
         if (!_inScan) {
-            readData(is);
+            position += readData(data);
         } else {
-            readScanData(is);
+            position += readScanData(data);
         }
     }    
 }
@@ -47,27 +50,24 @@ Jpeg::Jpeg() {
     
 }
 
-void Jpeg::readData(std::istream& is) {
-    uint8_t step = is.get();
+size_t Jpeg::readData(std::span<uint8_t> is) {
+    uint8_t step = is[0];
     if (step == 0xff) {
-        uint8_t markerCode = is.get();
-        std::cout << "Marker : 0x" << std::hex << static_cast<int>(markerCode) << std::dec << " pos: " << is.tellg();// << std::endl;
+        uint8_t markerCode = is[1];
         
         if (markerCode == 0xd8) {
             std::cout << "\tSOI Start of Image, skipping byte count" << std::endl;
-            return;
+            return 2;
         }
         
         uint16_t segmentBytes;
-        is.read(reinterpret_cast<char*>(&segmentBytes), 2);
+        segmentBytes = *reinterpret_cast<uint16_t*>(&is[2]);
         segmentBytes = htons(segmentBytes);
         segmentBytes -= 2;
         
         std::cout << "\tSegment has " << segmentBytes << " bytes";
         
-        std::vector<uint8_t> data;
-        data.resize(segmentBytes);
-        is.read(reinterpret_cast<char*>(&data[0]), data.size());
+        std::span<uint8_t> data(&is[4], segmentBytes);
         
         switch (markerCode) {
             case 0xe0:
@@ -98,7 +98,11 @@ void Jpeg::readData(std::istream& is) {
                 std::cout << "\tUnhandled marker segment" << std::endl;
                 break;
         }
+        
+        return 4 + segmentBytes;
     }
+    
+    return 1;
 }
 
 namespace {
@@ -171,17 +175,16 @@ uint8_t Jpeg::deZigZag(uint8_t index) {
     return zigzagTable[index];
 }
 
-void Jpeg::readScanData(std::istream &is) {
-    std::cout << "Reading scan data from position: " << is.tellg() << std::endl;
-    
+size_t Jpeg::readScanData(std::span<uint8_t> is) {
     size_t x = 0;
     size_t y = 0;
         
     BitDecoder dec;
-    dec.setData(&is);
+    dec.setData(is);
     
     try {
-        while (is.peek() != std::istream::traits_type::eof()) {
+        size_t position = 0;
+        while (position < is.size()) {
             const size_t mcuRes = 16;
             
             try {
@@ -202,6 +205,7 @@ void Jpeg::readScanData(std::istream &is) {
         std::cout << "readScanData, exception: " << e.what() << std::endl;
     }
     
+    return dec.position();
 }
 
 void Jpeg::copyDUIntoPixels(DataUnit& du, size_t subpixelIndex, image::Jpeg::ImageComponent& ic, const size_t x, const size_t y) {

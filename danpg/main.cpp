@@ -33,7 +33,16 @@ int main(int argc, const char * argv[]) {
         std::cout << "opened" << std::endl;
         
         runFuncTimed([&]() {
-            jpeg = image::Jpeg(f);
+            f.ignore(std::numeric_limits<std::streamsize>::max());
+            std::streamsize length = f.gcount();
+            f.clear();
+            f.seekg(0, std::ios_base::beg);
+            
+            std::vector<uint8_t> data;
+            data.resize(length);
+            f.read(reinterpret_cast<char*>(&data[0]), length);
+            
+            jpeg = image::Jpeg(data);
         });
         
         image::writeOutPPM("/private/tmp/jpeg.ppm", jpeg._x, jpeg._y, std::span{jpeg._image, jpeg._x * jpeg._y * sizeof(image::Colour)});

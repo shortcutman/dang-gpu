@@ -68,11 +68,11 @@ public:
     Colour* _image = nullptr;
     
 public:
-    Jpeg(std::istream& is);
+    Jpeg(std::span<uint8_t> is);
     Jpeg();
     
-    void readData(std::istream& is);
-    void readScanData(std::istream& is);
+    size_t readData(std::span<uint8_t> is);
+    size_t readScanData(std::span<uint8_t> is);
     void readMCU(BitDecoder& dec, size_t x, size_t y);
     DataUnit readBlock(BitDecoder& dec, ImageComponentInScan& ic);
     uint8_t deZigZag(uint8_t index);

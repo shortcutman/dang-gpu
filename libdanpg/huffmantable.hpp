@@ -40,7 +40,8 @@ class ResetMarkerException : public std::exception {
 class BitDecoder {
 private:
     HuffmanTable* _table = nullptr;
-    std::istream* _data = nullptr;
+    std::span<uint8_t> _data;
+    size_t _position = 0;
     
     uint32_t _bitsIntoByte = 0;
     uint32_t _bitsBuffered = 0;
@@ -49,7 +50,8 @@ private:
     
 public:
     void setTable(HuffmanTable* table);
-    void setData(std::istream* data);
+    void setData(std::span<uint8_t> data);
+    size_t position() const;
     
     uint8_t nextHuffmanByte();
     uint16_t peakXBits(size_t bits);
@@ -57,6 +59,9 @@ public:
     
 protected:
     void bufferBits(size_t bits, bool reading);
+    
+    std::optional<uint8_t> get();
+    std::optional<uint8_t> peek();
 };
 
 #endif /* huffmantable_hpp */
