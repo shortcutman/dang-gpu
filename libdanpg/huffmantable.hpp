@@ -59,9 +59,6 @@ public:
     
 protected:
     void bufferBits(size_t bits, bool reading);
-    
-    uint8_t get();
-    uint8_t peek();
 };
 
 #endif /* huffmantable_hpp */

@@ -173,18 +173,18 @@ void BitDecoder::bufferBits(size_t bits, bool reading) {
     }
     
     while (_bitsBuffered < bits && _position < _data.size()) {
-        auto nextByte = get();
+        auto nextByte = _data[_position++];
         if (nextByte == 0xFF) {
             if (_position >= _data.size()) {
                 throw std::runtime_error("Marker segment with no other byte");
             }
             
-            auto peekByte = peek();
+            auto peekByte = _data[_position];
             if (peekByte == 0x00) {
-                get(); //byte stuffing, F.1.2.3. throw this away.
+                _position++; //byte stuffing, F.1.2.3. throw this away.
             } else if (peekByte >= 0xD0 && peekByte <= 0xD7) {
                 //restart marker, consume marker, reset own state, and signal caller to reset
-                get();
+                _position++;
                 _markerBit = _bitsBuffered;
                 break;
             } else {
@@ -198,14 +198,4 @@ void BitDecoder::bufferBits(size_t bits, bool reading) {
         _currentBytes |= nextByte;
         _bitsBuffered += 8;
     }
-}
-
-uint8_t BitDecoder::get() {
-    assert(_position < _data.size());
-    return _data[_position++];
-}
-
-uint8_t BitDecoder::peek() {
-    assert(_position < _data.size());
-    return _data[_position];
 }
