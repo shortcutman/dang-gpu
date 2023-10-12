@@ -7,9 +7,8 @@
 
 #include "huffmantable.hpp"
 
-#include <iostream>
-#include <map>
 #include <sstream>
+#include <cassert>
 
 HuffmanTable HuffmanTable::build(std::span<uint8_t> data) {
     size_t codeCount = 0;
@@ -173,46 +172,40 @@ void BitDecoder::bufferBits(size_t bits, bool reading) {
         }
     }
     
-    while (_bitsBuffered < bits) {
+    while (_bitsBuffered < bits && _position < _data.size()) {
         auto nextByte = get();
-        if (!nextByte) {
-            break;
-        } else if (*nextByte == 0xFF) {
-            auto peekByte = peek();
-            if (!peekByte) {
+        if (nextByte == 0xFF) {
+            if (_position >= _data.size()) {
                 throw std::runtime_error("Marker segment with no other byte");
-            } else if (*peekByte == 0x00) {
+            }
+            
+            auto peekByte = peek();
+            if (peekByte == 0x00) {
                 get(); //byte stuffing, F.1.2.3. throw this away.
-            } else if (*peekByte >= 0xD0 && *peekByte <= 0xD7) {
+            } else if (peekByte >= 0xD0 && peekByte <= 0xD7) {
                 //restart marker, consume marker, reset own state, and signal caller to reset
                 get();
                 _markerBit = _bitsBuffered;
                 break;
             } else {
                 std::stringstream ss;
-                ss << "Marker: " << std::hex << 0xFF << *peekByte;
+                ss << "Marker: " << std::hex << 0xFF << peekByte;
                 throw std::runtime_error(ss.str());
             }
         }
         
         _currentBytes <<= 8;
-        _currentBytes |= *nextByte;
+        _currentBytes |= nextByte;
         _bitsBuffered += 8;
     }
 }
 
-std::optional<uint8_t> BitDecoder::get() {
-    if (_position < _data.size()) {
-        return _data[_position++];
-    } else {
-        return std::nullopt;
-    }
+uint8_t BitDecoder::get() {
+    assert(_position < _data.size());
+    return _data[_position++];
 }
 
-std::optional<uint8_t> BitDecoder::peek() {
-    if (_position < _data.size()) {
-        return _data[_position];
-    } else {
-        return std::nullopt;
-    }
+uint8_t BitDecoder::peek() {
+    assert(_position < _data.size());
+    return _data[_position];
 }

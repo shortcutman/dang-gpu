@@ -60,8 +60,8 @@ public:
 protected:
     void bufferBits(size_t bits, bool reading);
     
-    std::optional<uint8_t> get();
-    std::optional<uint8_t> peek();
+    uint8_t get();
+    uint8_t peek();
 };
 
 #endif /* huffmantable_hpp */
