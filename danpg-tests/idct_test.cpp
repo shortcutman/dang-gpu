@@ -112,8 +112,8 @@ TEST(IDCTTest, IDCTFloatLoeffler) {
         -56, -58, -61, -63, -63, -62, -59, -57
     };
 
-    auto result = image::idct_float_loeffler(input);
-    EXPECT_EQ(result, output);
+    image::idct_float_loeffler(input);
+    EXPECT_EQ(input, output);
 }
 
 TEST(IDCTTest, InputAndOutputOfLumaFromTestImageInteger) {

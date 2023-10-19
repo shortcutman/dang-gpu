@@ -141,19 +141,19 @@ std::array<int, 8> image::loeffler_1d_dct(const std::array<int, 8> in) {
     return stage4;
 }
 
-void image::loeffler_1d_idct_row(const int* const in, std::array<float, 8*8>& out, int offset) {
+void image::loeffler_1d_idct_row(const std::array<int, 8*8>& du, std::array<float, 8*8>& inter, int offset) {
     ///
     //stage4
     ///
     std::array<float, 8> stage4;
-    stage4[0] = in[0];
-    stage4[1] = in[4];
-    stage4[2] = in[2];
-    stage4[3] = in[6];
-    stage4[4] = in[1] - in[7];
-    stage4[5] = in[3] * std::sqrtf(2.f);
-    stage4[6] = in[5] * std::sqrtf(2.f);
-    stage4[7] = in[1] + in[7];
+    stage4[0] = du[0 + offset];
+    stage4[1] = du[4 + offset];
+    stage4[2] = du[2 + offset];
+    stage4[3] = du[6 + offset];
+    stage4[4] = du[1 + offset] - du[7 + offset];
+    stage4[5] = du[3 + offset] * std::sqrtf(2.f);
+    stage4[6] = du[5 + offset] * std::sqrtf(2.f);
+    stage4[7] = du[1 + offset] + du[7 + offset];
     
     ///
     //stage3
@@ -191,30 +191,30 @@ void image::loeffler_1d_idct_row(const int* const in, std::array<float, 8*8>& ou
     
     ///
     //stage 1
-    ///    
-    out[0 + offset] = stage2[0] + stage2[7];
-    out[1 + offset] = stage2[1] + stage2[6];
-    out[2 + offset] = stage2[2] + stage2[5];
-    out[3 + offset] = stage2[3] + stage2[4];
-    out[4 + offset] = stage2[3] - stage2[4];
-    out[5 + offset] = stage2[2] - stage2[5];
-    out[6 + offset] = stage2[1] - stage2[6];
-    out[7 + offset] = stage2[0] - stage2[7];
+    ///
+    inter[0 + offset] = stage2[0] + stage2[7];
+    inter[1 + offset] = stage2[1] + stage2[6];
+    inter[2 + offset] = stage2[2] + stage2[5];
+    inter[3 + offset] = stage2[3] + stage2[4];
+    inter[4 + offset] = stage2[3] - stage2[4];
+    inter[5 + offset] = stage2[2] - stage2[5];
+    inter[6 + offset] = stage2[1] - stage2[6];
+    inter[7 + offset] = stage2[0] - stage2[7];
 }
 
-void image::loeffler_1d_idct_col(const std::array<float, 8*8>& in, std::array<int, 8*8>& out, int offset) {
+void image::loeffler_1d_idct_col(const std::array<float, 8*8>& du, std::array<int, 8*8>& out,  int offset) {
     ///
     //stage4
     ///
     std::array<float, 8> stage4;
-    stage4[0] = in[0 + offset];
-    stage4[1] = in[32 + offset];
-    stage4[2] = in[16 + offset];
-    stage4[3] = in[48 + offset];
-    stage4[4] = in[8 + offset] - in[56 + offset];
-    stage4[5] = in[24 + offset] * std::sqrtf(2.f);
-    stage4[6] = in[40 + offset] * std::sqrtf(2.f);
-    stage4[7] = in[8 + offset] + in[56 + offset];
+    stage4[0] = du[0 + offset];
+    stage4[1] = du[32 + offset];
+    stage4[2] = du[16 + offset];
+    stage4[3] = du[48 + offset];
+    stage4[4] = du[8 + offset] - du[56 + offset];
+    stage4[5] = du[24 + offset] * std::sqrtf(2.f);
+    stage4[6] = du[40 + offset] * std::sqrtf(2.f);
+    stage4[7] = du[8 + offset] + du[56 + offset];
     
     ///
     //stage3
@@ -291,21 +291,18 @@ image::DataUnit image::dct_float_loeffler(const DataUnit& du) {
     return out;
 }
 
-image::DataUnit image::idct_float_loeffler(const DataUnit& du) {
-    std::array<float, 64> outFloat;
-    DataUnit out;
+void image::idct_float_loeffler(DataUnit& du) {
+    std::array<float, 8*8> intermediate;
     
     //rows
     for (int y = 0; y < 64; y+=8) {
-        loeffler_1d_idct_row(&du[y], outFloat, y);
+        loeffler_1d_idct_row(du, intermediate, y);
     }
     
     //columns
     for (int x = 0; x < 8; x++) {
-        loeffler_1d_idct_col(outFloat, out, x);
+        loeffler_1d_idct_col(intermediate, du, x);
     }
-    
-    return out;
 }
 
 image::DataUnit image::idct_int(const DataUnit& du) {

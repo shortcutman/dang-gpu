@@ -266,11 +266,13 @@ void Jpeg::readMCU(BitDecoder& dec, size_t x, size_t y) {
         size_t duCount = icS._ic->_h * icS._ic->_v;
         
         if (duCount == 1) {
-            auto du = idct(readBlock(dec, icS));
+            auto du = readBlock(dec, icS);
+            idct(du);
             copyDUIntoPixels(du, icIdx, *(icS._ic), x, y);
         } else {
             for (size_t i = 0; i < duCount; i++) {
-                auto du = idct(readBlock(dec, icS));
+                auto du = readBlock(dec, icS);
+                idct(du);
                 copy4DUIntoPixels(du, icIdx, *(icS._ic), i, x, y);
             }
         }
