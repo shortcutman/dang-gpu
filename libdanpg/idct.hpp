@@ -26,7 +26,7 @@ DataUnit idct_int_table(const DataUnit& du);
 std::array<int, 8> loeffler_1d_dct(const std::array<int, 8> in);
 
 inline void loeffler_1d_idct_col(const std::array<float, 8*8>& in, std::array<int, 8*8>& out, int offset);
-inline std::array<float, 8> loeffler_1d_idct_row(const int* const in);
+inline void loeffler_1d_idct_row(const int* const in, std::array<float, 8*8>& out, int offset);
 
 }
 

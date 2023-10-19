@@ -141,7 +141,7 @@ std::array<int, 8> image::loeffler_1d_dct(const std::array<int, 8> in) {
     return stage4;
 }
 
-std::array<float, 8> image::loeffler_1d_idct_row(const int* const in) {
+void image::loeffler_1d_idct_row(const int* const in, std::array<float, 8*8>& out, int offset) {
     ///
     //stage4
     ///
@@ -192,17 +192,26 @@ std::array<float, 8> image::loeffler_1d_idct_row(const int* const in) {
     ///
     //stage 1
     ///
-    std::array<float, 8> stage1;
-    stage1[0] = stage2[0] + stage2[7];
-    stage1[1] = stage2[1] + stage2[6];
-    stage1[2] = stage2[2] + stage2[5];
-    stage1[3] = stage2[3] + stage2[4];
-    stage1[4] = stage2[3] - stage2[4];
-    stage1[5] = stage2[2] - stage2[5];
-    stage1[6] = stage2[1] - stage2[6];
-    stage1[7] = stage2[0] - stage2[7];
+//    std::array<float, 8> stage1;
+//    stage1[0] = stage2[0] + stage2[7];
+//    stage1[1] = stage2[1] + stage2[6];
+//    stage1[2] = stage2[2] + stage2[5];
+//    stage1[3] = stage2[3] + stage2[4];
+//    stage1[4] = stage2[3] - stage2[4];
+//    stage1[5] = stage2[2] - stage2[5];
+//    stage1[6] = stage2[1] - stage2[6];
+//    stage1[7] = stage2[0] - stage2[7];
+//    
+//    return stage1;
     
-    return stage1;
+    out[0 + offset] = stage2[0] + stage2[7];
+    out[1 + offset] = stage2[1] + stage2[6];
+    out[2 + offset] = stage2[2] + stage2[5];
+    out[3 + offset] = stage2[3] + stage2[4];
+    out[4 + offset] = stage2[3] - stage2[4];
+    out[5 + offset] = stage2[2] - stage2[5];
+    out[6 + offset] = stage2[1] - stage2[6];
+    out[7 + offset] = stage2[0] - stage2[7];
 }
 
 void image::loeffler_1d_idct_col(const std::array<float, 8*8>& in, std::array<int, 8*8>& out, int offset) {
@@ -299,9 +308,8 @@ image::DataUnit image::idct_float_loeffler(const DataUnit& du) {
     DataUnit out;
     
     //rows
-    for (size_t y = 0; y < 64; y+=8) {
-        auto output = loeffler_1d_idct_row(&du[y]);
-        std::copy(output.begin(), output.end(), outFloat.begin() + y);
+    for (int y = 0; y < 64; y+=8) {
+        loeffler_1d_idct_row(&du[y], outFloat, y);
     }
     
     //columns
