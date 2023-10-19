@@ -191,19 +191,7 @@ void image::loeffler_1d_idct_row(const int* const in, std::array<float, 8*8>& ou
     
     ///
     //stage 1
-    ///
-//    std::array<float, 8> stage1;
-//    stage1[0] = stage2[0] + stage2[7];
-//    stage1[1] = stage2[1] + stage2[6];
-//    stage1[2] = stage2[2] + stage2[5];
-//    stage1[3] = stage2[3] + stage2[4];
-//    stage1[4] = stage2[3] - stage2[4];
-//    stage1[5] = stage2[2] - stage2[5];
-//    stage1[6] = stage2[1] - stage2[6];
-//    stage1[7] = stage2[0] - stage2[7];
-//    
-//    return stage1;
-    
+    ///    
     out[0 + offset] = stage2[0] + stage2[7];
     out[1 + offset] = stage2[1] + stage2[6];
     out[2 + offset] = stage2[2] + stage2[5];
