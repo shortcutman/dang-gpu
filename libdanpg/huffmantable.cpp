@@ -178,18 +178,13 @@ void BitDecoder::bufferBits(size_t bits, bool reading) {
                 throw std::runtime_error("Marker segment with no other byte");
             }
             
-            auto peekByte = _data[_position];
-            if (peekByte == 0x00) {
-                _position++; //byte stuffing, F.1.2.3. throw this away.
-            } else if (peekByte >= 0xD0 && peekByte <= 0xD7) {
+            auto markerByte = _data[_position++];
+            if (markerByte >= 0xD0 && markerByte <= 0xD7) {
                 //restart marker, consume marker, reset own state, and signal caller to reset
-                _position++;
                 _markerEncountered = true;
                 break;
-            } else {
-                std::stringstream ss;
-                ss << "Marker: " << std::hex << 0xFF << peekByte;
-                throw std::runtime_error(ss.str());
+            } else if (markerByte != 0x00) { //byte stuffing, F.1.2.3. throw this away.
+                throw std::runtime_error("");
             }
         }
         
