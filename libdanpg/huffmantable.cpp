@@ -110,7 +110,11 @@ void BitDecoder::reset() {
     _bitsIntoByte = 0;
     _bitsBuffered = 0;
     _currentBytes = 0;
-    _markerBit.reset();
+    _markerEncountered = false;
+}
+
+bool BitDecoder::markerEncountered() {
+    return _markerEncountered;
 }
 
 uint8_t BitDecoder::nextHuffmanByte() {
@@ -163,17 +167,8 @@ void BitDecoder::bufferBits(size_t bits, bool reading) {
         throw std::logic_error("Advancing by more than 16 bits not supported");
     }
     
-    if (_markerBit) {
-        if (bits > *_markerBit) {
-            if (reading) {
-//                throw ResetMarkerException();
-                return;
-            } else {
-                return;
-            }
-        } else if (reading) {
-            _markerBit = *_markerBit - bits;
-        }
+    if (_markerEncountered) {
+        return;
     }
     
     while (_bitsBuffered < bits && _position < _data.size()) {
@@ -189,7 +184,7 @@ void BitDecoder::bufferBits(size_t bits, bool reading) {
             } else if (peekByte >= 0xD0 && peekByte <= 0xD7) {
                 //restart marker, consume marker, reset own state, and signal caller to reset
                 _position++;
-                _markerBit = _bitsBuffered;
+                _markerEncountered = true;
                 break;
             } else {
                 std::stringstream ss;

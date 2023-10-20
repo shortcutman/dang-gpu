@@ -46,13 +46,14 @@ private:
     uint32_t _bitsIntoByte = 0;
     uint32_t _bitsBuffered = 0;
     uint32_t _currentBytes = 0;
-    std::optional<uint32_t> _markerBit;
+    bool _markerEncountered = false;
     
 public:
     void setTable(HuffmanTable* table);
     void setData(std::span<uint8_t> data);
     size_t position() const;
     void reset();
+    bool markerEncountered();
     
     uint8_t nextHuffmanByte();
     uint16_t peakXBits(size_t bits);
