@@ -129,9 +129,7 @@ uint8_t BitDecoder::nextHuffmanByte() {
 }
 
 uint16_t BitDecoder::nextXBits(size_t bits) {
-    if (bits > 16) {
-        throw std::logic_error("Advancing by more than 16 bits not supported");
-    }
+    assert(bits <= 16 && "Advancing by more than 16 bits not supported");
     
     bufferBits(bits, true);
     
@@ -147,9 +145,7 @@ uint16_t BitDecoder::nextXBits(size_t bits) {
 }
 
 uint16_t BitDecoder::peakXBits(size_t bits) {
-    if (bits > 16) {
-        throw std::logic_error("Advancing by more than 16 bits not supported");
-    }
+    assert(bits <= 16 && "Advancing by more than 16 bits not supported");
     
     bufferBits(bits, false);
     
@@ -163,9 +159,7 @@ uint16_t BitDecoder::peakXBits(size_t bits) {
 }
 
 void BitDecoder::bufferBits(size_t bits, bool reading) {
-    if (bits > 16) {
-        throw std::logic_error("Advancing by more than 16 bits not supported");
-    }
+    assert(bits <= 16 && "Advancing by more than 16 bits not supported");
     
     if (_markerEncountered) {
         return;
