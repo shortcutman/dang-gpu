@@ -52,6 +52,7 @@ public:
     void setTable(HuffmanTable* table);
     void setData(std::span<uint8_t> data);
     size_t position() const;
+    void reset();
     
     uint8_t nextHuffmanByte();
     uint16_t peakXBits(size_t bits);

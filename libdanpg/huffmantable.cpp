@@ -106,6 +106,13 @@ size_t BitDecoder::position() const {
     return _position;
 }
 
+void BitDecoder::reset() {
+    _bitsIntoByte = 0;
+    _bitsBuffered = 0;
+    _currentBytes = 0;
+    _markerBit.reset();
+}
+
 uint8_t BitDecoder::nextHuffmanByte() {
     uint16_t potentialCode = peakXBits(16);
     auto entry = _table->_hufflist[potentialCode];
@@ -159,11 +166,8 @@ void BitDecoder::bufferBits(size_t bits, bool reading) {
     if (_markerBit) {
         if (bits > *_markerBit) {
             if (reading) {
-                _bitsIntoByte = 0;
-                _bitsBuffered = 0;
-                _currentBytes = 0;
-                _markerBit.reset();
-                throw ResetMarkerException();
+//                throw ResetMarkerException();
+                return;
             } else {
                 return;
             }

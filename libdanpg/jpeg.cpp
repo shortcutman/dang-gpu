@@ -184,18 +184,22 @@ size_t Jpeg::readScanData(std::span<uint8_t> is) {
     
     try {
         size_t position = 0;
+        size_t restartInterval = _numberOfMCU;
         while (position < is.size()) {
             const size_t mcuRes = 16;
             
-            try {
-                readMCU(dec, x, y);
-                                
-                x += mcuRes;
-                if (x >= _x) {
-                    x = 0;
-                    y += mcuRes;
-                }
-            } catch (ResetMarkerException& ex) {
+            readMCU(dec, x, y);
+            restartInterval--;
+                            
+            x += mcuRes;
+            if (x >= _x) {
+                x = 0;
+                y += mcuRes;
+            }
+            
+            if (restartInterval == 0) {
+                restartInterval = _numberOfMCU;
+                dec.reset();
                 for (auto& icS : _imageComponentsInScan) {
                     icS.prevDC = 0;
                 }
