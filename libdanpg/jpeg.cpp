@@ -108,7 +108,7 @@ size_t Jpeg::readData(std::span<uint8_t> is) {
 namespace {
 
 int extend(int v, int t) {
-    auto vt = std::pow(2, t - 1);
+    auto vt = 1 << (t - 1);
     if (v < vt) {
         vt = 1 + ((-1) << t);
         return v + vt;
