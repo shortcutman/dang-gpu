@@ -3,5 +3,5 @@ cc_library(
     srcs = glob(["*.cpp"]),
     hdrs = glob(["*.hpp"]),
     includes = ["."],
-    visibility = ["//danpg:__pkg__"],
+    visibility = ["//visibility:public"],
 )

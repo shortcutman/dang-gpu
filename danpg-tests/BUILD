@@ -1,7 +1,8 @@
-cc_library(
-    name = "danpg-tests"
+cc_test(
+    name = "danpg-tests",
     srcs = glob(["*.cpp"]),
     deps = [
-        "//lib:libdanpg"
+        "@com_google_googletest//:gtest_main",
+        "//libdanpg:libdanpg"
     ]
 )
