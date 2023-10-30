@@ -1,0 +1,6 @@
+{
+    "testMate.cpp.debug.configTemplate": null,
+    "testMate.cpp.test.advancedExecutables": [{
+        "pattern": "bazel-bin/danpg-tests/danpg-tests"
+    }]
+}
