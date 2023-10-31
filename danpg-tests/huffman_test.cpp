@@ -6,6 +6,7 @@
 //
 
 #include <gtest/gtest.h>
+#include <stdexcept>
 #include <string>
 #include <strstream>
 
@@ -243,40 +244,53 @@ TEST_F(HuffmanDecoderTest, Decode6bitThen9bit) {
     EXPECT_EQ(byte, 0x0b);
 }
 
-TEST_F(HuffmanDecoderTest, DecodeMarkerSegmentException) {
+TEST_F(HuffmanDecoderTest, DecodeMarkerSegment) {
     std::vector<uint8_t> encoded = {0xFF, 0xD0};
 
     decoder.setData(encoded);
-    EXPECT_THROW(decoder.nextHuffmanByte(), ResetMarkerException);
+    EXPECT_FALSE(decoder.markerEncountered());
+    EXPECT_THROW(decoder.nextXBits(8), std::runtime_error);
+    EXPECT_TRUE(decoder.markerEncountered());
 }
 
 TEST_F(HuffmanDecoderTest, PeekAndReadMarkerSegment) {
     std::vector<uint8_t> encoded = {0xFF, 0xD0};
 
     decoder.setData(encoded);
-    EXPECT_EQ(decoder.peakXBits(16), 0x0000);
-    EXPECT_THROW(decoder.nextXBits(16), ResetMarkerException);
+    EXPECT_FALSE(decoder.markerEncountered());
+    EXPECT_NO_THROW(decoder.peakXBits(16));
+    EXPECT_TRUE(decoder.markerEncountered());
+    EXPECT_THROW(decoder.nextXBits(16), std::runtime_error);
+    EXPECT_TRUE(decoder.markerEncountered());
 }
 
 TEST_F(HuffmanDecoderTest, PeekAndReadAheadofMarkerSegment) {
     std::vector<uint8_t> encoded = {0xD0, 0xFF, 0xD0, 0x00};
 
     decoder.setData(encoded);
+    EXPECT_FALSE(decoder.markerEncountered());
     EXPECT_EQ(decoder.peakXBits(4), 0xD);
+    EXPECT_FALSE(decoder.markerEncountered());
     EXPECT_EQ(decoder.peakXBits(16), 0xD000);
+    EXPECT_TRUE(decoder.markerEncountered());
     EXPECT_EQ(decoder.nextXBits(4), 0x0D);
+    EXPECT_TRUE(decoder.markerEncountered());
     EXPECT_EQ(decoder.nextXBits(4), 0x00);
-    EXPECT_THROW(decoder.nextXBits(16), ResetMarkerException);
+    EXPECT_TRUE(decoder.markerEncountered());
 }
 
 TEST_F(HuffmanDecoderTest, PeekAndReadAheadofMarkerSegment2) {
     std::vector<uint8_t> encoded = {0xD0, 0xFF, 0xD0, 0x00};
 
     decoder.setData(encoded);
+    EXPECT_FALSE(decoder.markerEncountered());
     EXPECT_EQ(decoder.peakXBits(16), 0xD000);
+    EXPECT_TRUE(decoder.markerEncountered());
     EXPECT_EQ(decoder.nextXBits(4), 0x0D);
+    EXPECT_TRUE(decoder.markerEncountered());
     EXPECT_EQ(decoder.nextXBits(4), 0x00);
-    EXPECT_THROW(decoder.nextXBits(16), ResetMarkerException);
+    EXPECT_TRUE(decoder.markerEncountered());
+    EXPECT_THROW(decoder.nextXBits(16), std::runtime_error);
 }
 
 TEST_F(HuffmanDecoderTest, NotEnoughBytesErrorDueToNoBytes) {
