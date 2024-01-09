@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		652B0F462B4D0D19005C7DBF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 652B0F452B4D0D19005C7DBF /* Foundation.framework */; };
+		652B0F482B4D0D20005C7DBF /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 652B0F472B4D0D20005C7DBF /* QuartzCore.framework */; };
+		652B0F4A2B4D0D27005C7DBF /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 652B0F492B4D0D27005C7DBF /* Metal.framework */; };
+		652B0F4C2B4D0D41005C7DBF /* metalimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 652B0F4B2B4D0D41005C7DBF /* metalimpl.cpp */; };
+		652B0F6D2B4D61F3005C7DBF /* ycbcrToRGB.metal in Sources */ = {isa = PBXBuildFile; fileRef = 652B0F6C2B4D61F3005C7DBF /* ycbcrToRGB.metal */; };
 		65518FEC2A0129F000F2D094 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65518FEB2A0129F000F2D094 /* main.cpp */; };
 		659BFE5E2A791E240031D35A /* idct_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 659BFE5D2A791E240031D35A /* idct_test.cpp */; };
 		659BFE5F2A791F430031D35A /* jpeg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65518FF32A012A9700F2D094 /* jpeg.cpp */; };
@@ -63,6 +68,18 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		652B0F3E2B4D0CE9005C7DBF /* Foundation */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Foundation; sourceTree = "<group>"; };
+		652B0F3F2B4D0CEA005C7DBF /* Metal */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Metal; sourceTree = "<group>"; };
+		652B0F402B4D0CEA005C7DBF /* SingleHeader */ = {isa = PBXFileReference; lastKnownFileType = folder; path = SingleHeader; sourceTree = "<group>"; };
+		652B0F412B4D0CEA005C7DBF /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		652B0F422B4D0CEA005C7DBF /* QuartzCore */ = {isa = PBXFileReference; lastKnownFileType = folder; path = QuartzCore; sourceTree = "<group>"; };
+		652B0F432B4D0CEA005C7DBF /* MetalFX */ = {isa = PBXFileReference; lastKnownFileType = folder; path = MetalFX; sourceTree = "<group>"; };
+		652B0F442B4D0CEA005C7DBF /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
+		652B0F452B4D0D19005C7DBF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		652B0F472B4D0D20005C7DBF /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		652B0F492B4D0D27005C7DBF /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
+		652B0F4B2B4D0D41005C7DBF /* metalimpl.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = metalimpl.cpp; sourceTree = "<group>"; };
+		652B0F6C2B4D61F3005C7DBF /* ycbcrToRGB.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = ycbcrToRGB.metal; sourceTree = "<group>"; };
 		65518FE82A0129F000F2D094 /* danpg */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = danpg; sourceTree = BUILT_PRODUCTS_DIR; };
 		65518FEB2A0129F000F2D094 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		65518FF22A012A1100F2D094 /* testimage.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = testimage.jpg; sourceTree = "<group>"; };
@@ -104,15 +121,41 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				652B0F4A2B4D0D27005C7DBF /* Metal.framework in Frameworks */,
+				652B0F482B4D0D20005C7DBF /* QuartzCore.framework in Frameworks */,
+				652B0F462B4D0D19005C7DBF /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		652B0F3C2B4D0CB8005C7DBF /* vendor */ = {
+			isa = PBXGroup;
+			children = (
+				652B0F3D2B4D0CC0005C7DBF /* metal-cpp */,
+			);
+			path = vendor;
+			sourceTree = "<group>";
+		};
+		652B0F3D2B4D0CC0005C7DBF /* metal-cpp */ = {
+			isa = PBXGroup;
+			children = (
+				652B0F3E2B4D0CE9005C7DBF /* Foundation */,
+				652B0F442B4D0CEA005C7DBF /* LICENSE.txt */,
+				652B0F3F2B4D0CEA005C7DBF /* Metal */,
+				652B0F432B4D0CEA005C7DBF /* MetalFX */,
+				652B0F422B4D0CEA005C7DBF /* QuartzCore */,
+				652B0F412B4D0CEA005C7DBF /* README.md */,
+				652B0F402B4D0CEA005C7DBF /* SingleHeader */,
+			);
+			path = "metal-cpp";
+			sourceTree = "<group>";
+		};
 		65518FDF2A0129F000F2D094 = {
 			isa = PBXGroup;
 			children = (
+				652B0F3C2B4D0CB8005C7DBF /* vendor */,
 				65518FEA2A0129F000F2D094 /* danpg */,
 				65A3DB912A36FA50001158DA /* danpg-tests */,
 				65A3DB9C2A36FA67001158DA /* libdanpg */,
@@ -163,6 +206,8 @@
 				659BFE612A7A68920031D35A /* idct.hpp */,
 				659BFE642A7A69D10031D35A /* colour.cpp */,
 				659BFE652A7A69D10031D35A /* colour.hpp */,
+				652B0F4B2B4D0D41005C7DBF /* metalimpl.cpp */,
+				652B0F6C2B4D61F3005C7DBF /* ycbcrToRGB.metal */,
 			);
 			path = libdanpg;
 			sourceTree = "<group>";
@@ -170,6 +215,9 @@
 		65A3DBA62A36FA7C001158DA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				652B0F492B4D0D27005C7DBF /* Metal.framework */,
+				652B0F472B4D0D20005C7DBF /* QuartzCore.framework */,
+				652B0F452B4D0D19005C7DBF /* Foundation.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -311,6 +359,8 @@
 				65A3DBAE2A36FBC8001158DA /* huffmantable.cpp in Sources */,
 				659BFE5F2A791F430031D35A /* jpeg.cpp in Sources */,
 				659BFE622A7A68920031D35A /* idct.cpp in Sources */,
+				652B0F4C2B4D0D41005C7DBF /* metalimpl.cpp in Sources */,
+				652B0F6D2B4D61F3005C7DBF /* ycbcrToRGB.metal in Sources */,
 				659BFE662A7A69D10031D35A /* colour.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -495,6 +545,7 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
+				HEADER_SEARCH_PATHS = "vendor/metal-cpp";
 				MACOSX_DEPLOYMENT_TARGET = 13.3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -508,6 +559,7 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
+				HEADER_SEARCH_PATHS = "vendor/metal-cpp";
 				MACOSX_DEPLOYMENT_TARGET = 13.3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
