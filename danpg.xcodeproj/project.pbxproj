@@ -13,6 +13,11 @@
 		652B0F4C2B4D0D41005C7DBF /* metalimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 652B0F4B2B4D0D41005C7DBF /* metalimpl.cpp */; };
 		652B0F6D2B4D61F3005C7DBF /* ycbcrToRGB.metal in Sources */ = {isa = PBXBuildFile; fileRef = 652B0F6C2B4D61F3005C7DBF /* ycbcrToRGB.metal */; };
 		65518FEC2A0129F000F2D094 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65518FEB2A0129F000F2D094 /* main.cpp */; };
+		657BA7BA2B4E02330007F6F4 /* metal_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 657BA7B92B4E02330007F6F4 /* metal_test.cpp */; };
+		657BA7BB2B4E071E0007F6F4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 652B0F452B4D0D19005C7DBF /* Foundation.framework */; };
+		657BA7BC2B4E07220007F6F4 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 652B0F472B4D0D20005C7DBF /* QuartzCore.framework */; };
+		657BA7BD2B4E07270007F6F4 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 652B0F492B4D0D27005C7DBF /* Metal.framework */; };
+		657BA7C12B4E0AFA0007F6F4 /* add_arrays.metal in Sources */ = {isa = PBXBuildFile; fileRef = 657BA7BE2B4E09330007F6F4 /* add_arrays.metal */; };
 		659BFE5E2A791E240031D35A /* idct_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 659BFE5D2A791E240031D35A /* idct_test.cpp */; };
 		659BFE5F2A791F430031D35A /* jpeg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65518FF32A012A9700F2D094 /* jpeg.cpp */; };
 		659BFE622A7A68920031D35A /* idct.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 659BFE602A7A68920031D35A /* idct.cpp */; };
@@ -85,6 +90,8 @@
 		65518FF22A012A1100F2D094 /* testimage.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = testimage.jpg; sourceTree = "<group>"; };
 		65518FF32A012A9700F2D094 /* jpeg.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = jpeg.cpp; sourceTree = "<group>"; };
 		65518FF42A012A9700F2D094 /* jpeg.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = jpeg.hpp; sourceTree = "<group>"; };
+		657BA7B92B4E02330007F6F4 /* metal_test.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = metal_test.cpp; sourceTree = "<group>"; };
+		657BA7BE2B4E09330007F6F4 /* add_arrays.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = add_arrays.metal; sourceTree = "<group>"; };
 		659BFE5D2A791E240031D35A /* idct_test.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = idct_test.cpp; sourceTree = "<group>"; };
 		659BFE602A7A68920031D35A /* idct.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = idct.cpp; sourceTree = "<group>"; };
 		659BFE612A7A68920031D35A /* idct.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = idct.hpp; sourceTree = "<group>"; };
@@ -113,6 +120,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				657BA7BD2B4E07270007F6F4 /* Metal.framework in Frameworks */,
+				657BA7BC2B4E07220007F6F4 /* QuartzCore.framework in Frameworks */,
+				657BA7BB2B4E071E0007F6F4 /* Foundation.framework in Frameworks */,
 				65A3DBA72A36FA7C001158DA /* liblibdanpg.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -191,6 +201,7 @@
 				659BFE5D2A791E240031D35A /* idct_test.cpp */,
 				659BFE682A7A6B0D0031D35A /* colour_test.cpp */,
 				659BFE6E2A7A6F070031D35A /* jpeg_test.cpp */,
+				657BA7B92B4E02330007F6F4 /* metal_test.cpp */,
 			);
 			path = "danpg-tests";
 			sourceTree = "<group>";
@@ -207,6 +218,7 @@
 				659BFE642A7A69D10031D35A /* colour.cpp */,
 				659BFE652A7A69D10031D35A /* colour.hpp */,
 				652B0F4B2B4D0D41005C7DBF /* metalimpl.cpp */,
+				657BA7BE2B4E09330007F6F4 /* add_arrays.metal */,
 				652B0F6C2B4D61F3005C7DBF /* ycbcrToRGB.metal */,
 			);
 			path = libdanpg;
@@ -349,6 +361,7 @@
 				659BFE5E2A791E240031D35A /* idct_test.cpp in Sources */,
 				659BFE692A7A6B0D0031D35A /* colour_test.cpp in Sources */,
 				659BFE6F2A7A6F070031D35A /* jpeg_test.cpp in Sources */,
+				657BA7BA2B4E02330007F6F4 /* metal_test.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -360,6 +373,7 @@
 				659BFE5F2A791F430031D35A /* jpeg.cpp in Sources */,
 				659BFE622A7A68920031D35A /* idct.cpp in Sources */,
 				652B0F4C2B4D0D41005C7DBF /* metalimpl.cpp in Sources */,
+				657BA7C12B4E0AFA0007F6F4 /* add_arrays.metal in Sources */,
 				652B0F6D2B4D61F3005C7DBF /* ycbcrToRGB.metal in Sources */,
 				659BFE662A7A69D10031D35A /* colour.cpp in Sources */,
 			);
@@ -512,9 +526,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				HEADER_SEARCH_PATHS = /opt/homebrew/include;
+				HEADER_SEARCH_PATHS = (
+					/opt/homebrew/include,
+					"vendor/metal-cpp",
+				);
 				LIBRARY_SEARCH_PATHS = /opt/homebrew/lib;
-				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				OTHER_LDFLAGS = (
 					"-l",
 					gtest,
@@ -527,9 +544,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				HEADER_SEARCH_PATHS = /opt/homebrew/include;
+				HEADER_SEARCH_PATHS = (
+					/opt/homebrew/include,
+					"vendor/metal-cpp",
+				);
 				LIBRARY_SEARCH_PATHS = /opt/homebrew/lib;
-				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				OTHER_LDFLAGS = (
 					"-l",
 					gtest,
