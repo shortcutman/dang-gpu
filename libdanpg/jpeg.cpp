@@ -209,6 +209,8 @@ size_t Jpeg::readScanData(std::span<uint8_t> is) {
         std::cout << "readScanData, exception: " << e.what() << std::endl;
     }
     
+    ycbcrToRGB_accel(_image, this->_x, this->_y);
+    
     return dec.position();
 }
 
@@ -281,8 +283,6 @@ void Jpeg::readMCU(BitDecoder& dec, size_t x, size_t y) {
             }
         }
     }
-    
-    ycbcrToRGBOverMCU(_image, _x, x, y);
 }
 
 void Jpeg::appZeroData(std::span<uint8_t> data) {

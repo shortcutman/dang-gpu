@@ -9,6 +9,10 @@
 
 #include <fstream>
 
+#include <Foundation/Foundation.hpp>
+#include <Metal/Metal.hpp>
+#include <QuartzCore/QuartzCore.hpp>
+
 using namespace image;
 
 namespace {
@@ -40,6 +44,35 @@ void image::ycbcrToRGBOverMCU(Colour *data, size_t width, size_t xStart, size_t 
             data[y * width + x] = ycbcrToRGB(data[y * width + x]);
         }
     }
+}
+
+void image::ycbcrToRGB_accel(Colour *data, size_t width, size_t height) {
+    NS::SharedPtr<NS::AutoreleasePool> _pool;
+    NS::SharedPtr<MTL::Device> _metalDevice;
+    NS::SharedPtr<MTL::CommandQueue> _commandQueue;
+    _pool = NS::TransferPtr(NS::AutoreleasePool::alloc()->init());
+    _metalDevice = NS::TransferPtr(MTL::CreateSystemDefaultDevice());
+    _commandQueue = NS::TransferPtr(_metalDevice->newCommandQueue());
+    auto defaultLib = _metalDevice->newDefaultLibrary();
+    auto function = defaultLib->newFunction(MTLSTR("ycbcrToRGB"));
+    NS::Error* error = nullptr;
+    auto functionPSO = NS::TransferPtr(_metalDevice->newComputePipelineState(function, &error));
+    
+    auto buffer = NS::TransferPtr(_metalDevice->newBuffer(data, width * height * sizeof(Colour), MTL::ResourceStorageModeShared, nullptr));
+
+    auto commandBuffer = _commandQueue->commandBuffer();
+    auto computeEncoder = commandBuffer->computeCommandEncoder();
+    computeEncoder->setComputePipelineState(functionPSO.get());
+    computeEncoder->setBuffer(buffer.get(), 0, 0);
+
+    auto gridSize = MTL::Size(width, height, 1);
+    auto threadGroupSizeObj = MTL::Size(16, 16, 1);
+    
+    computeEncoder->dispatchThreads(gridSize, threadGroupSizeObj);
+    computeEncoder->endEncoding();
+    
+    commandBuffer->commit();
+    commandBuffer->waitUntilCompleted();
 }
 
 void image::writeOutPPM(std::string filepath, size_t width, size_t height, std::span<Colour> data) {

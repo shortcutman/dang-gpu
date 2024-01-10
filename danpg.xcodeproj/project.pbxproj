@@ -18,6 +18,9 @@
 		657BA7BC2B4E07220007F6F4 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 652B0F472B4D0D20005C7DBF /* QuartzCore.framework */; };
 		657BA7BD2B4E07270007F6F4 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 652B0F492B4D0D27005C7DBF /* Metal.framework */; };
 		657BA7C12B4E0AFA0007F6F4 /* add_arrays.metal in Sources */ = {isa = PBXBuildFile; fileRef = 657BA7BE2B4E09330007F6F4 /* add_arrays.metal */; };
+		657BA7C22B4E20330007F6F4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 652B0F452B4D0D19005C7DBF /* Foundation.framework */; };
+		657BA7C32B4E20380007F6F4 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 652B0F472B4D0D20005C7DBF /* QuartzCore.framework */; };
+		657BA7C42B4E203C0007F6F4 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 652B0F492B4D0D27005C7DBF /* Metal.framework */; };
 		659BFE5E2A791E240031D35A /* idct_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 659BFE5D2A791E240031D35A /* idct_test.cpp */; };
 		659BFE5F2A791F430031D35A /* jpeg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65518FF32A012A9700F2D094 /* jpeg.cpp */; };
 		659BFE622A7A68920031D35A /* idct.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 659BFE602A7A68920031D35A /* idct.cpp */; };
@@ -112,6 +115,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				657BA7C42B4E203C0007F6F4 /* Metal.framework in Frameworks */,
+				657BA7C32B4E20380007F6F4 /* QuartzCore.framework in Frameworks */,
+				657BA7C22B4E20330007F6F4 /* Foundation.framework in Frameworks */,
 				65A3DBB12A3EDF19001158DA /* liblibdanpg.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
