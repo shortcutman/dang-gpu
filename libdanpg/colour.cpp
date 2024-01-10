@@ -46,21 +46,16 @@ void image::ycbcrToRGBOverMCU(Colour *data, size_t width, size_t xStart, size_t 
     }
 }
 
-void image::ycbcrToRGB_accel(Colour *data, size_t width, size_t height) {
-    NS::SharedPtr<NS::AutoreleasePool> _pool;
-    NS::SharedPtr<MTL::Device> _metalDevice;
-    NS::SharedPtr<MTL::CommandQueue> _commandQueue;
-    _pool = NS::TransferPtr(NS::AutoreleasePool::alloc()->init());
-    _metalDevice = NS::TransferPtr(MTL::CreateSystemDefaultDevice());
-    _commandQueue = NS::TransferPtr(_metalDevice->newCommandQueue());
-    auto defaultLib = _metalDevice->newDefaultLibrary();
+void image::ycbcrToRGB_accel(MTL::Device* metalDevice, Colour *data, size_t width, size_t height) {
+    auto commandQueue = NS::TransferPtr(metalDevice->newCommandQueue());
+    auto defaultLib = metalDevice->newDefaultLibrary();
     auto function = defaultLib->newFunction(MTLSTR("ycbcrToRGB"));
     NS::Error* error = nullptr;
-    auto functionPSO = NS::TransferPtr(_metalDevice->newComputePipelineState(function, &error));
+    auto functionPSO = NS::TransferPtr(metalDevice->newComputePipelineState(function, &error));
     
-    auto buffer = NS::TransferPtr(_metalDevice->newBuffer(data, width * height * sizeof(Colour), MTL::ResourceStorageModeShared, nullptr));
+    auto buffer = NS::TransferPtr(metalDevice->newBuffer(data, width * height * sizeof(Colour), MTL::ResourceStorageModeShared, nullptr));
 
-    auto commandBuffer = _commandQueue->commandBuffer();
+    auto commandBuffer = commandQueue->commandBuffer();
     auto computeEncoder = commandBuffer->computeCommandEncoder();
     computeEncoder->setComputePipelineState(functionPSO.get());
     computeEncoder->setBuffer(buffer.get(), 0, 0);

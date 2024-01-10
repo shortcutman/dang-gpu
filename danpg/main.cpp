@@ -8,6 +8,10 @@
 #include <iostream>
 #include <fstream>
 
+#include <Foundation/Foundation.hpp>
+#include <Metal/Metal.hpp>
+#include <QuartzCore/QuartzCore.hpp>
+
 #include "jpeg.hpp"
 #include "colour.hpp"
 
@@ -32,6 +36,11 @@ int main(int argc, const char * argv[]) {
         
         std::cout << "opened" << std::endl;
         
+        NS::SharedPtr<NS::AutoreleasePool> _pool;
+        NS::SharedPtr<MTL::Device> _metalDevice;
+        _pool = NS::TransferPtr(NS::AutoreleasePool::alloc()->init());
+        _metalDevice = NS::TransferPtr(MTL::CreateSystemDefaultDevice());
+        
         runFuncTimed([&]() {
             f.ignore(std::numeric_limits<std::streamsize>::max());
             std::streamsize length = f.gcount();
@@ -42,7 +51,7 @@ int main(int argc, const char * argv[]) {
             data.resize(length);
             f.read(reinterpret_cast<char*>(&data[0]), length);
             
-            jpeg = image::Jpeg(data);
+            jpeg = image::Jpeg(data, _metalDevice.get());
         });
         
         image::writeOutPPM("/private/tmp/jpeg.ppm", jpeg._x, jpeg._y, std::span{jpeg._image, jpeg._x * jpeg._y * sizeof(image::Colour)});

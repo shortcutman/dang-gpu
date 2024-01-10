@@ -13,6 +13,10 @@
 #include "colour.hpp"
 #include "huffmantable.hpp"
 
+namespace MTL {
+class Device;
+}
+
 namespace image {
 
 class Jpeg {
@@ -65,10 +69,11 @@ public:
     size_t _numberOfMCU = 0;
     bool _inScan = false;
     
+    MTL::Device* _metalDevice = nullptr;
     Colour* _image = nullptr;
     
 public:
-    Jpeg(std::span<uint8_t> is);
+    Jpeg(std::span<uint8_t> is, MTL::Device* metalDevice);
     Jpeg();
     
     size_t readData(std::span<uint8_t> is);

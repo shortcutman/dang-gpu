@@ -33,7 +33,7 @@ T getAs(void* data) {
 
 }
 
-Jpeg::Jpeg(std::span<uint8_t> is) {
+Jpeg::Jpeg(std::span<uint8_t> is, MTL::Device* metalDevice) : _metalDevice(metalDevice) {
     size_t position = 0;
     
     while (position < is.size()) {
@@ -209,7 +209,7 @@ size_t Jpeg::readScanData(std::span<uint8_t> is) {
         std::cout << "readScanData, exception: " << e.what() << std::endl;
     }
     
-    ycbcrToRGB_accel(_image, this->_x, this->_y);
+    ycbcrToRGB_accel(_metalDevice, _image, this->_x, this->_y);
     
     return dec.position();
 }
