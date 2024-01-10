@@ -31,6 +31,8 @@ struct Colour {
         int cr;
     };
     
+    int padding;
+    
     bool operator==(const Colour& b) const {
         return this->r == b.r &&
                this->g == b.g &&

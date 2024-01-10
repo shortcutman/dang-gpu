@@ -5,38 +5,28 @@
 //  Created by Daniel Burke on 9/1/2024.
 //
 
-//#include <metal_stdlib>
-//using namespace metal;
-//
-//inline int adjustAndClamp(float val) {
-//    val += 128.f;
-//    
-//    if (val > 255) {
-//        return 255;
-//    } else if (val < 0) {
-//        return 0;
-//    } else {
-//        return static_cast<int>(val);
-//    }
-//}
-//
-//}
-//
-//Colour image::ycbcrToRGB(const Colour& ycbcr) {
-//    auto r = adjustAndClamp(ycbcr.y + (1.402f * ycbcr.cr));
-//    auto g = adjustAndClamp(ycbcr.y - (0.34414f * ycbcr.cb) - (0.71414f * ycbcr.cr));
-//    auto b = adjustAndClamp(ycbcr.y + (1.772f * ycbcr.cb));
-//    return {r, g, b};
-//}
-//
-//void image::ycbcrToRGBOverMCU(device int* data,
-//                              int xWidth,
-//                              uint xIndex,
-//                              uint yIndex) {
-//    data[yIndex * xWidth + xIndex]
-//    for (size_t y = yStart; y < (yStart + 16); y++) {
-//        for (size_t x = xStart; x < (xStart + 16); x++) {
-//            data[y * width + x] = ycbcrToRGB(data[y * width + x]);
-//        }
-//    }
-//}
+#include <metal_stdlib>
+using namespace metal;
+
+int adjustAndClamp(float val) {
+    val += 128.f;
+    
+    if (val > 255) {
+        return 255;
+    } else if (val < 0) {
+        return 0;
+    } else {
+        return static_cast<int>(val);
+    }
+}
+
+kernel void ycbcrToRGB(device int3* data, uint2 location [[thread_position_in_grid]], uint2 gridSize [[threads_per_grid]]) {
+    int3 pixelIn = data[location.y * gridSize.x + location.x];
+    int3 pixelOut;
+    
+    pixelOut.x = adjustAndClamp(pixelIn.x + (1.402f * pixelIn.z));
+    pixelOut.y = adjustAndClamp(pixelIn.x - (0.34414f * pixelIn.y) - (0.71414f * pixelIn.z));
+    pixelOut.z = adjustAndClamp(pixelIn.x + (1.772f * pixelIn.y));
+    
+    data[location.y * gridSize.x + location.x] = pixelOut;
+}

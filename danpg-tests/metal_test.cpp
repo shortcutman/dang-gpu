@@ -14,6 +14,8 @@
 #include <Metal/Metal.hpp>
 #include <QuartzCore/QuartzCore.hpp>
 
+#include "colour.hpp"
+
 class MetalTest : public ::testing::Test {
 protected:
     NS::SharedPtr<NS::AutoreleasePool> _pool;
@@ -103,4 +105,45 @@ TEST_F(MetalTest, AddArraysIsolatedTest) {
     commandBuffer->waitUntilCompleted();
 }
 
+TEST_F(MetalTest, YCbCrToRGB) {
+    auto pso = newPSOFromFuncName("ycbcrToRGB");
+    EXPECT_TRUE(pso);
+    
+    NS::SharedPtr<MTL::Buffer> buffer = NS::TransferPtr(_metalDevice->newBuffer(sizeof(image::Colour), MTL::ResourceStorageModeShared));
+    EXPECT_TRUE(sizeof(image::Colour) == 16);
+    
+    int* data = reinterpret_cast<int*>(buffer->contents());
+    data[0] = -49;
+    data[1] = -14;
+    data[2] = 14;
+    data[3] = 12345678;
 
+    auto commandBuffer = _commandQueue->commandBuffer();
+    assert(commandBuffer != nullptr);
+    
+    auto computeEncoder = commandBuffer->computeCommandEncoder();
+    assert(computeEncoder != nullptr);
+    
+    computeEncoder->setComputePipelineState(pso.get());
+    computeEncoder->setBuffer(buffer.get(), 0, 0);
+    
+    auto gridSize = MTL::Size(1, 1, 1);
+    
+    auto threadGroupSize = pso->maxTotalThreadsPerThreadgroup();
+    if (threadGroupSize > arrayLength) {
+        threadGroupSize = arrayLength;
+    }
+    
+    auto threadGroupSizeObj = MTL::Size(threadGroupSize, 1, 1);
+    
+    computeEncoder->dispatchThreads(gridSize, threadGroupSizeObj);
+    computeEncoder->endEncoding();
+    
+    commandBuffer->commit();
+    commandBuffer->waitUntilCompleted();
+    
+    EXPECT_EQ(data[0], 98);
+    EXPECT_EQ(data[1], 73);
+    EXPECT_EQ(data[2], 54);
+    EXPECT_EQ(data[3], 12345678);
+}
