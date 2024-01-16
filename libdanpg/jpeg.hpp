@@ -48,6 +48,8 @@ public:
         //ie: Cb has 1 sample of every 2 pixels in both H and V
         uint8_t _hPixelsPerSample;
         uint8_t _vPixelsPerSample;
+        
+        std::unique_ptr<int> _icSubPixelData;
     };
     std::vector<ImageComponent> _imageComponents;
     
@@ -90,10 +92,8 @@ public:
     void startOfScan(std::span<uint8_t> data);
     void restartInterval(std::span<uint8_t> data);
     
-    void copyDUIntoPixels(DataUnit& du, size_t subpixelIndex, image::Jpeg::ImageComponent& ic, const size_t x, const size_t y);
-    
-    void copy4DUIntoPixels(DataUnit& du, size_t subpixelIndex, image::Jpeg::ImageComponent& ic, size_t duIndex, const size_t x, const size_t y);
-    
+    void copyDUToSubpixels(DataUnit& du, image::Jpeg::ImageComponent& ic, size_t x, size_t y);
+    void copyImgCompToImage();
 };
 
 }
