@@ -66,6 +66,7 @@ void ycbcrToRGBOverMCU(Colour* data, size_t width, size_t x, size_t y);
 void ycbcrToRGB_accel(MTL::Device* metalDevice, Colour* data, size_t width, size_t height);
 
 void writeOutPPM(std::string filepath, size_t width, size_t height, std::span<Colour> data);
+void writeOutPPM(std::string filepath, size_t width, size_t height, std::span<int> data);
 
 }
 
