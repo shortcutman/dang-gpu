@@ -213,7 +213,7 @@ size_t Jpeg::readScanData(std::span<uint8_t> is) {
     } catch (std::exception& e) {
         std::cout << "readScanData, exception: " << e.what() << std::endl;
     }
-        
+    
     copyImgCompToImage();
     ycbcrToRGB_accel(_metalDevice, _image, this->_x, this->_y);
     
@@ -223,15 +223,17 @@ size_t Jpeg::readScanData(std::span<uint8_t> is) {
 void Jpeg::copyImgCompToImage() {
     auto commandQueue = NS::TransferPtr(_metalDevice->newCommandQueue());
     auto defaultLib = _metalDevice->newDefaultLibrary();
-    auto function = defaultLib->newFunction(MTLSTR("copyLumaToImage"));
-    NS::Error* error = nullptr;
-    auto functionPSO = NS::TransferPtr(_metalDevice->newComputePipelineState(function, &error));
     
     auto bufferImage = NS::TransferPtr(_metalDevice->newBuffer(_image, _x * _y * sizeof(Colour), MTL::ResourceStorageModeShared, nullptr));
     
-//    for (auto& ic : _imageComponents) {
-        auto& ic = _imageComponents.front();
-        
+    std::array<std::string, 3> funcs{"copyLumaToImage",
+        "copyChromaBlue", "copyChromaRed"};
+    auto funcIt = funcs.begin();
+    
+    for (auto& ic : _imageComponents) {
+        auto function = defaultLib->newFunction(NS::String::string((funcIt++)->c_str(), NS::ASCIIStringEncoding));
+        NS::Error* error = nullptr;
+        auto functionPSO = NS::TransferPtr(_metalDevice->newComputePipelineState(function, &error));
         
         auto icWidth = (_x / ic._hPixelsPerSample);
         auto icHeight = (_y / ic._vPixelsPerSample);
@@ -252,12 +254,12 @@ void Jpeg::copyImgCompToImage() {
         
         commandBuffer->commit();
         commandBuffer->waitUntilCompleted();
-//    }
+    }
 }
 
 void Jpeg::copyDUToSubpixels(DataUnit &du, image::Jpeg::ImageComponent &ic, size_t x, size_t y) {
     int* subpixelData = ic._icSubPixelData.get();
-    size_t subpixelStart = y * _x + x;
+    size_t subpixelStart = (y / ic._vPixelsPerSample) * (_x / ic._hPixelsPerSample) + (x / ic._hPixelsPerSample);
     
     for (size_t duRow = 0; duRow < 8; duRow++) {
         size_t subpixelIncrement = duRow * (_x / ic._hPixelsPerSample);
@@ -274,7 +276,7 @@ void Jpeg::readMCU(BitDecoder& dec, size_t x, size_t y) {
         if (duCount == 1) {
             auto du = readBlock(dec, icS);
             idct(du);
-//            copyDUToSubpixels(du, *(icS._ic), x / icS._ic->_hPixelsPerSample, y / icS._ic->_vPixelsPerSample);
+            copyDUToSubpixels(du, *(icS._ic), x, y);
         } else {
             const std::array<size_t, 4> xOffsetForDU = {0, 8, 0, 8};
             const std::array<size_t, 4> yOffsetForDU = {0, 0, 8, 8};
@@ -354,7 +356,6 @@ void Jpeg::sofBaselineDCT(std::span<uint8_t> data) {
         ic._v = *reinterpret_cast<uint8_t*>(&data[byteStart + 1]) & 0x0F;
         ic._tq = *reinterpret_cast<uint8_t*>(&data[byteStart + 2]);
         ic._tqTable = &_quantTables[(int)ic._tq];
-        ic._icSubPixelData.reset(new int[(_x / ic._h) * (_y / ic._v)]);
         _imageComponents.push_back(std::move(ic));
         
         hMax = std::max(hMax, ic._h);
@@ -372,6 +373,7 @@ void Jpeg::sofBaselineDCT(std::span<uint8_t> data) {
     for (auto& ic : _imageComponents) {
         ic._hPixelsPerSample = hMax / ic._h;
         ic._vPixelsPerSample = vMax / ic._v;
+        ic._icSubPixelData.reset(new int[(_x / ic._hPixelsPerSample) * (_y / ic._vPixelsPerSample)]);
     }
     
     if (nf != _imageComponents.size()) {
