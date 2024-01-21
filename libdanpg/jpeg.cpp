@@ -213,11 +213,42 @@ size_t Jpeg::readScanData(std::span<uint8_t> is) {
     } catch (std::exception& e) {
         std::cout << "readScanData, exception: " << e.what() << std::endl;
     }
-    
+        
+    idctImgComp();
     copyImgCompToImage();
     ycbcrToRGB_accel(_metalDevice, _image, this->_x, this->_y);
     
     return dec.position();
+}
+
+void Jpeg::idctImgComp() {
+    auto commandQueue = NS::TransferPtr(_metalDevice->newCommandQueue());
+    auto defaultLib = _metalDevice->newDefaultLibrary();
+    auto function = defaultLib->newFunction(NS::String::string("idct", NS::ASCIIStringEncoding));
+    NS::Error* error = nullptr;
+    auto functionPSO = NS::TransferPtr(_metalDevice->newComputePipelineState(function, &error));
+        
+    for (auto& ic : _imageComponents) {
+        
+        auto icWidth = (_x / ic._hPixelsPerSample);
+        auto icHeight = (_y / ic._vPixelsPerSample);
+        
+        auto bufferImgComponent = NS::TransferPtr(_metalDevice->newBuffer(ic._icSubPixelData.get(), icWidth * icHeight * sizeof(int), MTL::ResourceStorageModeShared, nullptr));
+
+        auto commandBuffer = commandQueue->commandBuffer();
+        auto computeEncoder = commandBuffer->computeCommandEncoder();
+        computeEncoder->setComputePipelineState(functionPSO.get());
+        computeEncoder->setBuffer(bufferImgComponent.get(), 0, 0);
+
+        auto gridSize = MTL::Size(icWidth / 8, icHeight / 8, 1);
+        auto threadGroupSizeObj = MTL::Size(1, 1, 1);
+        
+        computeEncoder->dispatchThreads(gridSize, threadGroupSizeObj);
+        computeEncoder->endEncoding();
+        
+        commandBuffer->commit();
+        commandBuffer->waitUntilCompleted();
+    }
 }
 
 void Jpeg::copyImgCompToImage() {
@@ -275,7 +306,6 @@ void Jpeg::readMCU(BitDecoder& dec, size_t x, size_t y) {
         
         if (duCount == 1) {
             auto du = readBlock(dec, icS);
-            idct(du);
             copyDUToSubpixels(du, *(icS._ic), x, y);
         } else {
             const std::array<size_t, 4> xOffsetForDU = {0, 8, 0, 8};
@@ -283,7 +313,6 @@ void Jpeg::readMCU(BitDecoder& dec, size_t x, size_t y) {
             
             for (size_t i = 0; i < duCount; i++) {
                 auto du = readBlock(dec, icS);
-                idct(du);
                 copyDUToSubpixels(du, *(icS._ic), x + xOffsetForDU[i], y + yOffsetForDU[i]);
             }
         }

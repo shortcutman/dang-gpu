@@ -94,6 +94,7 @@ public:
     
     void copyDUToSubpixels(DataUnit& du, image::Jpeg::ImageComponent& ic, size_t x, size_t y);
     void copyImgCompToImage();
+    void idctImgComp();
 };
 
 }
