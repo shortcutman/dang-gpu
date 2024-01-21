@@ -13,6 +13,7 @@
 
 namespace MTL {
     class Device;
+    class ComputeCommandEncoder;
 }
 
 namespace image {
@@ -63,7 +64,7 @@ struct Colour {
 
 inline Colour ycbcrToRGB(const Colour& ycbcr);
 void ycbcrToRGBOverMCU(Colour* data, size_t width, size_t x, size_t y);
-void ycbcrToRGB_accel(MTL::Device* metalDevice, Colour* data, size_t width, size_t height);
+void ycbcrToRGB_accel(MTL::Device* metalDevice, MTL::ComputeCommandEncoder* commandEncoder, Colour* data, size_t width, size_t height);
 
 void writeOutPPM(std::string filepath, size_t width, size_t height, std::span<Colour> data);
 void writeOutPPM(std::string filepath, size_t width, size_t height, std::span<int> data);

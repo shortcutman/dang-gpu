@@ -46,8 +46,7 @@ void image::ycbcrToRGBOverMCU(Colour *data, size_t width, size_t xStart, size_t 
     }
 }
 
-void image::ycbcrToRGB_accel(MTL::Device* metalDevice, Colour *data, size_t width, size_t height) {
-    auto commandQueue = NS::TransferPtr(metalDevice->newCommandQueue());
+void image::ycbcrToRGB_accel(MTL::Device* metalDevice, MTL::ComputeCommandEncoder* commandEncoder, Colour *data, size_t width, size_t height) {
     auto defaultLib = metalDevice->newDefaultLibrary();
     auto function = defaultLib->newFunction(MTLSTR("ycbcrToRGB"));
     NS::Error* error = nullptr;
@@ -55,19 +54,13 @@ void image::ycbcrToRGB_accel(MTL::Device* metalDevice, Colour *data, size_t widt
     
     auto buffer = NS::TransferPtr(metalDevice->newBuffer(data, width * height * sizeof(Colour), MTL::ResourceStorageModeShared, nullptr));
 
-    auto commandBuffer = commandQueue->commandBuffer();
-    auto computeEncoder = commandBuffer->computeCommandEncoder();
-    computeEncoder->setComputePipelineState(functionPSO.get());
-    computeEncoder->setBuffer(buffer.get(), 0, 0);
+    commandEncoder->setComputePipelineState(functionPSO.get());
+    commandEncoder->setBuffer(buffer.get(), 0, 0);
 
     auto gridSize = MTL::Size(width, height, 1);
     auto threadGroupSizeObj = MTL::Size(16, 16, 1);
     
-    computeEncoder->dispatchThreads(gridSize, threadGroupSizeObj);
-    computeEncoder->endEncoding();
-    
-    commandBuffer->commit();
-    commandBuffer->waitUntilCompleted();
+    commandEncoder->dispatchThreads(gridSize, threadGroupSizeObj);
 }
 
 void image::writeOutPPM(std::string filepath, size_t width, size_t height, std::span<Colour> data) {

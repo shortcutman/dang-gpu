@@ -8,7 +8,6 @@
 #include "jpeg.hpp"
 
 #include "colour.hpp"
-#include "idct.hpp"
 
 #include <cstddef>
 #include <iostream>
@@ -213,16 +212,23 @@ size_t Jpeg::readScanData(std::span<uint8_t> is) {
     } catch (std::exception& e) {
         std::cout << "readScanData, exception: " << e.what() << std::endl;
     }
-        
-    idctImgComp();
-    copyImgCompToImage();
-    ycbcrToRGB_accel(_metalDevice, _image, this->_x, this->_y);
+    
+    auto commandQueue = NS::TransferPtr(_metalDevice->newCommandQueue());
+    auto commandBuffer = commandQueue->commandBuffer();
+    auto computeEncoder = commandBuffer->computeCommandEncoder();
+    
+    idctImgComp(computeEncoder);
+    copyImgCompToImage(computeEncoder);
+    ycbcrToRGB_accel(_metalDevice, computeEncoder, _image, this->_x, this->_y);
+    
+    computeEncoder->endEncoding();
+    commandBuffer->commit();
+    commandBuffer->waitUntilCompleted();
     
     return dec.position();
 }
 
-void Jpeg::idctImgComp() {
-    auto commandQueue = NS::TransferPtr(_metalDevice->newCommandQueue());
+void Jpeg::idctImgComp(MTL::ComputeCommandEncoder* commandEncoder) {
     auto defaultLib = _metalDevice->newDefaultLibrary();
     auto function = defaultLib->newFunction(NS::String::string("idct", NS::ASCIIStringEncoding));
     NS::Error* error = nullptr;
@@ -235,24 +241,17 @@ void Jpeg::idctImgComp() {
         
         auto bufferImgComponent = NS::TransferPtr(_metalDevice->newBuffer(ic._icSubPixelData.get(), icWidth * icHeight * sizeof(int), MTL::ResourceStorageModeShared, nullptr));
 
-        auto commandBuffer = commandQueue->commandBuffer();
-        auto computeEncoder = commandBuffer->computeCommandEncoder();
-        computeEncoder->setComputePipelineState(functionPSO.get());
-        computeEncoder->setBuffer(bufferImgComponent.get(), 0, 0);
+        commandEncoder->setComputePipelineState(functionPSO.get());
+        commandEncoder->setBuffer(bufferImgComponent.get(), 0, 0);
 
         auto gridSize = MTL::Size(icWidth / 8, icHeight / 8, 1);
         auto threadGroupSizeObj = MTL::Size(1, 1, 1);
         
-        computeEncoder->dispatchThreads(gridSize, threadGroupSizeObj);
-        computeEncoder->endEncoding();
-        
-        commandBuffer->commit();
-        commandBuffer->waitUntilCompleted();
+        commandEncoder->dispatchThreads(gridSize, threadGroupSizeObj);
     }
 }
 
-void Jpeg::copyImgCompToImage() {
-    auto commandQueue = NS::TransferPtr(_metalDevice->newCommandQueue());
+void Jpeg::copyImgCompToImage(MTL::ComputeCommandEncoder* commandEncoder) {
     auto defaultLib = _metalDevice->newDefaultLibrary();
     
     auto bufferImage = NS::TransferPtr(_metalDevice->newBuffer(_image, _x * _y * sizeof(Colour), MTL::ResourceStorageModeShared, nullptr));
@@ -271,20 +270,14 @@ void Jpeg::copyImgCompToImage() {
         
         auto bufferImgComponent = NS::TransferPtr(_metalDevice->newBuffer(ic._icSubPixelData.get(), icWidth * icHeight * sizeof(int), MTL::ResourceStorageModeShared, nullptr));
 
-        auto commandBuffer = commandQueue->commandBuffer();
-        auto computeEncoder = commandBuffer->computeCommandEncoder();
-        computeEncoder->setComputePipelineState(functionPSO.get());
-        computeEncoder->setBuffer(bufferImgComponent.get(), 0, 0);
-        computeEncoder->setBuffer(bufferImage.get(), 0, 1);
+        commandEncoder->setComputePipelineState(functionPSO.get());
+        commandEncoder->setBuffer(bufferImgComponent.get(), 0, 0);
+        commandEncoder->setBuffer(bufferImage.get(), 0, 1);
 
         auto gridSize = MTL::Size(_x, _y, 1);
         auto threadGroupSizeObj = MTL::Size(16, 16, 1);
         
-        computeEncoder->dispatchThreads(gridSize, threadGroupSizeObj);
-        computeEncoder->endEncoding();
-        
-        commandBuffer->commit();
-        commandBuffer->waitUntilCompleted();
+        commandEncoder->dispatchThreads(gridSize, threadGroupSizeObj);
     }
 }
 

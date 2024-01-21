@@ -14,7 +14,8 @@
 #include "huffmantable.hpp"
 
 namespace MTL {
-class Device;
+    class Device;
+    class ComputeCommandEncoder;
 }
 
 namespace image {
@@ -93,8 +94,8 @@ public:
     void restartInterval(std::span<uint8_t> data);
     
     void copyDUToSubpixels(DataUnit& du, image::Jpeg::ImageComponent& ic, size_t x, size_t y);
-    void copyImgCompToImage();
-    void idctImgComp();
+    void copyImgCompToImage(MTL::ComputeCommandEncoder* commandQueue);
+    void idctImgComp(MTL::ComputeCommandEncoder* commandQueue);
 };
 
 }
